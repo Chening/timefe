@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timefe - Global Time Display</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;700&display=swap');
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            color: #e2e8f0;
+            overflow-x: hidden;
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+            transition: background-image 1s ease;
+        }
+        
+        .day-bg {
+            background-image: url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop');
+        }
+        
+        .night-bg {
+            background-image: url('https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?q=80&w=2071&auto=format&fit=crop');
+        }
+        
+        .tech-border {
+            border: 1px solid rgba(74, 222, 128, 0.3);
+            box-shadow: 0 0 15px rgba(74, 222, 128, 0.2);
+        }
+        
+        .tech-glow {
+            box-shadow: 0 0 20px rgba(74, 222, 128, 0.3);
+        }
+        
+        .city-card {
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        .city-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(74, 222, 128, 0.4);
+        }
+        
+        .clock-face {
+            background: radial-gradient(circle, #1e293b 40%, #0f172a 100%);
+            border: 2px solid #4ade80;
+        }
+        
+        .clock-hand {
+            transform-origin: bottom center;
+            transition: transform 0.5s cubic-bezier(0.4, 2.3, 0.3, 1);
+        }
+        
+        .earth-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.7);
+            z-index: -1;
+        }
+        
+        .timezone-line {
+            position: absolute;
+            height: 100%;
+            width: 1px;
+            background: linear-gradient(to bottom, transparent, #4ade80, transparent);
+            transform-origin: top center;
+        }
+        
+        .sun-position {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #f59e0b 30%, #f97316 70%);
+            filter: blur(5px);
+            z-index: -1;
+        }
+        
+        .moon-position {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #e2e8f0 30%, #94a3b8 70%);
+            filter: blur(3px);
+            z-index: -1;
+        }
+        
+        .moon-phase {
+            position: relative;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #64748b;
+            overflow: hidden;
+        }
+        
+        .moon-light {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #e2e8f0;
+            transform: translateX(0);
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 0.6; }
+            50% { opacity: 1; }
+            100% { opacity: 0.6; }
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        .celestial-body {
+            transition: all 1s ease;
+        }
+        
+        .pomodoro-timer {
+            font-family: 'Orbitron', sans-serif;
+        }
+        
+        .progress-ring {
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+        
+        .progress-ring-circle {
+            transition: stroke-dashoffset 0.35s;
+            stroke-linecap: round;
+        }
+        
+        .work-mode {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: rgba(239, 68, 68, 0.5);
+        }
+        
+        .break-mode {
+            background: rgba(16, 185, 129, 0.2);
+            border-color: rgba(16, 185, 129, 0.5);
+        }
+        
+        .long-break-mode {
+            background: rgba(59, 130, 246, 0.2);
+            border-color: rgba(59, 130, 246, 0.5);
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <div class="earth-overlay"></div>
+    
+    <header class="container mx-auto px-4 py-8">
+        <div class="flex justify-between items-center">
+            <div class="flex items-center">
+                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-green-400 to-blue-500 flex items-center justify-center tech-glow">
+                    <i class="fas fa-globe text-white text-xl"></i>
+                </div>
+                <h1 class="ml-4 text-3xl font-bold bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent font-['Orbitron']">TIMEFE</h1>
+            </div>
+            <div class="flex items-center space-x-4">
+                <div class="relative">
+                    <input type="text" placeholder="Search city..." class="bg-slate-800 bg-opacity-70 border border-slate-600 rounded-full py-2 px-4 pr-10 focus:outline-none focus:ring-2 focus:ring-green-400 text-white">
+                    <i class="fas fa-search absolute right-3 top-3 text-slate-400"></i>
+                </div>
+                <button class="bg-gradient-to-r from-green-500 to-blue-500 text-white px-6 py-2 rounded-full hover:opacity-90 transition">
+                    <i class="fas fa-plus mr-2"></i> Add City
+                </button>
+            </div>
+        </div>
+    </header>
+    
+    <main class="container mx-auto px-4 py-8">
+        <!-- World Clock Section (Prioritized at top) -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
+            <!-- Combined World Clock & Moon Phase -->
+            <div class="bg-slate-800 bg-opacity-70 rounded-xl p-6 tech-border">
+                <h3 class="text-xl font-bold mb-4 flex items-center">
+                    <i class="fas fa-globe-americas mr-2 text-blue-400"></i> World Clock & Moon
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center">
+                            <span>UTC</span>
+                            <span class="font-mono" id="utc-time">00:00:00</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span>Your Local Time</span>
+                            <span class="font-mono" id="local-time">00:00:00</span>
+                        </div>
+                        <div class="h-1 bg-gradient-to-r from-blue-500 to-green-500 rounded-full my-2"></div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div class="bg-slate-700 bg-opacity-50 p-2 rounded text-center">
+                                <div class="text-xs text-slate-400">Daylight</div>
+                                <div id="daylight-hours">12h 34m</div>
+                            </div>
+                            <div class="bg-slate-700 bg-opacity-50 p-2 rounded text-center">
+                                <div class="text-xs text-slate-400">Night</div>
+                                <div id="night-hours">11h 26m</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div class="flex flex-col items-center">
+                            <div class="moon-phase mb-2">
+                                <div class="moon-light" id="moon-phase"></div>
+                            </div>
+                            <div class="text-sm" id="moon-phase-name">Waxing Gibbous</div>
+                        </div>
+                        <div class="text-sm space-y-2">
+                            <div>Illumination: <span id="moon-illumination">78%</span></div>
+                            <div>Age: <span id="moon-age">11.2 days</span></div>
+                            <div>Next Full Moon: <span id="next-full-moon">3 days</span></div>
+                        </div>
+                        <div class="mt-2 bg-slate-700 bg-opacity-50 p-2 rounded text-center pulse">
+                            <div class="text-xs text-slate-300">Current Moon Sign</div>
+                            <div class="font-bold" id="moon-sign">Leo</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Current Location Time -->
+            <div class="bg-slate-800 bg-opacity-70 rounded-xl p-6 tech-border relative overflow-hidden" id="current-location-card">
+                <h3 class="text-xl font-bold mb-4 flex items-center">
+                    <i class="fas fa-map-marker-alt mr-2 text-green-400"></i> Current Location
+                </h3>
+                <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <h2 class="text-2xl font-bold" id="current-city">Detecting...</h2>
+                        <p class="text-slate-400" id="current-country"></p>
+                    </div>
+                    <div class="bg-green-900 bg-opacity-50 px-3 py-1 rounded-full text-sm flex items-center" id="current-timezone">
+                        <i class="fas fa-clock mr-1 text-green-300"></i> Loading...
+                    </div>
+                </div>
+                <div class="flex justify-between items-center mb-6">
+                    <div class="text-5xl font-bold font-['Orbitron'] tracking-tighter" id="current-time">00:00:00</div>
+                    <div class="text-sm text-slate-400" id="current-date">Jan 1, 2023</div>
+                </div>
+                <div class="relative h-48 bg-slate-900 rounded-lg overflow-hidden">
+                    <div id="celestial-display" class="absolute inset-0">
+                        <!-- Sun or moon will be placed here by JS -->
+                    </div>
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <div class="w-32 h-32 rounded-full clock-face relative">
+                            <!-- Clock hands will be added by JS -->
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-4 text-sm text-slate-400">
+                    <div id="day-night-info">Detecting day/night cycle...</div>
+                </div>
+            </div>
+            
+            <!-- Pomodoro Timer -->
+            <div class="bg-slate-800 bg-opacity-70 rounded-xl p-6 tech-border" id="pomodoro-timer">
+                <h3 class="text-xl font-bold mb-4 flex items-center">
+                    <i class="fas fa-clock mr-2 text-red-400"></i> Pomodoro Timer
+                </h3>
+                <div class="flex flex-col items-center">
+                    <div class="relative w-48 h-48 flex items-center justify-center mb-4">
+                        <svg class="progress-ring w-full h-full" width="120" height="120">
+                            <circle class="progress-ring-circle" stroke-width="6" fill="transparent" r="52" cx="60" cy="60"/>
+                        </svg>
+                        <div class="absolute text-4xl font-bold font-['Orbitron']" id="pomodoro-time">25:00</div>
+                    </div>
+                    
+                    <div class="flex space-x-4 mb-4">
+                        <button class="px-4 py-2 rounded-full bg-slate-700 hover:bg-slate-600 transition" id="pomodoro-start">
+                            <i class="fas fa-play mr-1"></i> Start
+                        </button>
+                        <button class="px-4 py-2 rounded-full bg-slate-700 hover:bg-slate-600 transition" id="pomodoro-reset">
+                            <i class="fas fa-redo mr-1"></i> Reset
+                        </button>
+                    </div>
+                    
+                    <div class="flex justify-between w-full mb-4">
+                        <div class="text-center">
+                            <div class="text-xs text-slate-400">Work</div>
+                            <div class="font-bold" id="work-sessions">0/4</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-xs text-slate-400">Status</div>
+                            <div class="font-bold" id="pomodoro-status">Ready</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-xs text-slate-400">Next</div>
+                            <div class="font-bold" id="next-session">Work</div>
+                        </div>
+                    </div>
+                    
+                    <div class="w-full bg-slate-700 rounded-full h-2 mb-4">
+                        <div class="bg-green-500 h-2 rounded-full" id="session-progress" style="width: 0%"></div>
+                    </div>
+                    
+                    <div class="grid grid-cols-3 gap-2 w-full">
+                        <button class="p-2 rounded bg-slate-700 hover:bg-slate-600 transition" data-mode="work">
+                            <i class="fas fa-briefcase mr-1"></i> Work
+                        </button>
+                        <button class="p-2 rounded bg-slate-700 hover:bg-slate-600 transition" data-mode="break">
+                            <i class="fas fa-coffee mr-1"></i> Break
+                        </button>
+                        <button class="p-2 rounded bg-slate-700 hover:bg-slate-600 transition" data-mode="long-break">
+                            <i class="fas fa-couch mr-1"></i> Long Break
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 4 Major City Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" id="major-cities">
+            <!-- New York -->
+            <div class="city-card bg-slate-800 bg-opacity-70 rounded-xl p-6 tech-border relative overflow-hidden">
+                <div class="absolute -right-10 -top-10 w-32 h-32 bg-blue-500 rounded-full opacity-20"></div>
+                <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <h2 class="text-2xl font-bold flex items-center">
+                            <i class="fas fa-building mr-2 text-blue-400"></i> New York
+                        </h2>
+                        <p class="text-slate-400">United States</p>
+                    </div>
+                    <div class="bg-blue-900 bg-opacity-50 px-3 py-1 rounded-full text-sm flex items-center">
+                        <i class="fas fa-flag-usa mr-1 text-blue-300"></i> EST
+                    </div>
+                </div>
+                <div class="flex justify-between items-center mb-6">
+                    <div class="text-5xl font-bold font-['Orbitron'] tracking-tighter" id="ny-time">00:00:00</div>
+                    <div class="text-sm text-slate-400" id="ny-date">Jan 1, 2023</div>
+                </div>
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center">
+                        <i class="fas fa-temperature-low mr-2 text-blue-300"></i>
+                        <span>24°C</span>
+                    </div>
+                    <div class="flex items-center">
+                        <i class="fas fa-cloud mr-2 text-blue-300"></i>
+                        <span>Partly Cloudy</span>
+                    </div>
+                </div>
+                <div class="mt-4 pt-4 border-t border-slate-700 flex justify-between">
+                    <div class="text-xs text-slate-400">
+                        <i class="fas fa-subway mr-1"></i> Subway running
+                    </div>
+                    <div class="text-xs text-slate-400">
+                        <i class="fas fa-coffee mr-1"></i> Coffee shops open
+                    </div>
+                </div>
+            </div>
+            
+            <!-- London -->
+            <div class="city-card bg-slate-800 bg-opacity-70 rounded-xl p-6 tech-border relative overflow-hidden">
+                <div class="absolute -right-10 -top-10 w-32 h-32 bg-red-500 rounded-full opacity-20"></div>
+                <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <h2 class="text-2xl font-bold flex items-center">
+                            <i class="fas fa-landmark mr-2 text-red-400"></i> London
+                        </h2>
+                        <p class="text-slate-400">United Kingdom</p>
+                    </div>
+                    <div class="bg-red-900 bg-opacity-50 px-3 py-1 rounded-full text-sm flex items-center">
+                        <i class="fas fa-flag-uk mr-1 text-red-300"></i> GMT
+                    </div>
+                </div>
+                <div class="flex justify-between items-center mb-6">
+                    <div class="text-5xl font-bold font-['Orbitron'] tracking-tighter" id="london-time">00:00:00</div>
+                    <div class="text-sm text-slate-400" id="london-date">Jan 1, 2023</div>
+                </div>
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center">
+                        <i class="fas fa-temperature-low mr-2 text-red-300"></i>
+                        <span>18°C</span>
+                    </div>
+                    <div class="flex items-center">
+                        <i class="fas fa-cloud-rain mr-2 text-red-300"></i>
+                        <span>Light Rain</span>
+                    </div>
+                </div>
+                <div class="mt-4 pt-4 border-t border-slate-700 flex justify-between">
+                    <div class="text-xs text-slate-400">
+                        <i class="fas fa-bus mr-1"></i> Buses running
+                    </div>
+                    <div class="text-xs text-slate-400">
+                        <i class="fas fa-umbrella mr-1"></i> Rain expected
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Tokyo -->
+            <div class="city-card bg-slate-800 bg-opacity-70 rounded-xl p-6 tech-border relative overflow-hidden">
+                <div class="absolute -right-10 -top-10 w-32 h-32 bg-pink-500 rounded-full opacity-20"></div>
+                <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <h2 class="text-2xl font-bold flex items-center">
+                            <i class="fas fa-torii-gate mr-2 text-pink-400"></i> Tokyo
+                        </h2>
+                        <p class="text-slate-400">Japan</p>
+                    </div>
+                    <div class="bg-pink-900 bg-opacity-50 px-3 py-1 rounded-full text-sm flex items-center">
+                        <i class="fas fa-flag mr-1 text-pink-300"></i> JST
+                    </div>
+                </div>
+                <div class="flex justify-between items-center mb-6">
+                    <div class="text-5xl font-bold font-['Orbitron'] tracking-tighter" id="tokyo-time">00:00:00</div>
+                    <div class="text-sm text-slate-400" id="tokyo-date">Jan 1, 2023</div>
+                </div>
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center">
+                        <i class="fas fa-temperature-low mr-2 text-pink-300"></i>
+                        <span>22°C</span>
+                    </div>
+                    <div class="flex items-center">
+                        <i class="fas fa-sun mr-2 text-pink-300"></i>
+                        <span>Sunny</span>
+                    </div>
+                </div>
+                <div class="mt-4 pt-4 border-t border-slate-700 flex justify-between">
+                    <div class="text-xs text-slate-400">
+                        <i class="fas fa-train mr-1"></i> Trains running
+                    </div>
+                    <div class="text-xs text-slate-400">
+                        <i class="fas fa-shopping-bag mr-1"></i> Stores open
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sydney -->
+            <div class="city-card bg-slate-800 bg-opacity-70 rounded-xl p-6 tech-border relative overflow-hidden">
+                <div class="absolute -right-10 -top-10 w-32 h-32 bg-yellow-500 rounded-full opacity-20"></div>
+                <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <h2 class="text-2xl font-bold flex items-center">
+                            <i class="fas fa-koala mr-2 text-yellow-400"></i> Sydney
+                        </h2>
+                        <p class="text-slate-400">Australia</p>
+                    </div>
+                    <div class="bg-yellow-900 bg-opacity-50 px-3 py-1 rounded-full text-sm flex items-center">
+                        <i class="fas fa-flag mr-1 text-yellow-300"></i> AEST
+                    </div>
+                </div>
+                <div class="flex justify-between items-center mb-6">
+                    <div class="text-5xl font-bold font-['Orbitron'] tracking-tighter" id="sydney-time">00:00:00</div>
+                    <div class="text-sm text-slate-400" id="sydney-date">Jan 1, 2023</div>
+                </div>
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center">
+                        <i class="fas fa-temperature-low mr-2 text-yellow-300"></i>
+                        <span>20°C</span>
+                    </div>
+                    <div class="flex items-center">
+                        <i class="fas fa-cloud-sun mr-2 text-yellow-300"></i>
+                        <span>Partly Sunny</span>
+                    </div>
+                </div>
+                <div class="mt-4 pt-4 border-t border-slate-700 flex justify-between">
+                    <div class="text-xs text-slate-400">
+                        <i class="fas fa-ferry mr-1"></i> Ferries running
+                    </div>
+                    <div class="text-xs text-slate-400">
+                        <i class="fas fa-utensils mr-1"></i> Restaurants open
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <footer class="container mx-auto px-4 py-8 mt-16 border-t border-slate-700">
+        <div class="flex flex-col md:flex-row justify-between items-center">
+            <div class="flex items-center mb-4 md:mb-0">
+                <div class="w-10 h-10 rounded-full bg-gradient-to-br from-green-400 to-blue-500 flex items-center justify-center">
+                    <i class="fas fa-globe text-white"></i>
+                </div>
+                <span class="ml-3 text-xl font-bold bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent font-['Orbitron']">TIMEFE</span>
+            </div>
+            <div class="flex space-x-6">
+                <a href="#" class="text-slate-400 hover:text-white transition">About</a>
+                <a href="#" class="text-slate-400 hover:text-white transition">API</a>
+                <a href="#" class="text-slate-400 hover:text-white transition">Privacy</a>
+                <a href="#" class="text-slate-400 hover:text-white transition">Terms</a>
+                <a href="#" class="text-slate-400 hover:text-white transition">Contact</a>
+            </div>
+        </div>
+        <div class="mt-8 text-center text-sm text-slate-500">
+            © 2023 Timefe. All times are calculated based on your current location and browser settings.
+        </div>
+    </footer>
+
+    <script>
+        // User's location data
+        let userLocation = {
+            city: "Unknown",
+            country: "Unknown",
+            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+            isDaytime: true
+        };
+        
+        // Major cities data
+        const majorCities = [
+            { id: "ny", name: "New York", country: "United States", timezone: "America/New_York", icon: "building", color: "blue" },
+            { id: "london", name: "London", country: "United Kingdom", timezone: "Europe/London", icon: "landmark", color: "red" },
+            { id: "tokyo", name: "Tokyo", country: "Japan", timezone: "Asia/Tokyo", icon: "torii-gate", color: "pink" },
+            { id: "sydney", name: "Sydney", country: "Australia", timezone: "Australia/Sydney", icon: "koala", color: "yellow" }
+        ];
+        
+        // Pomodoro Timer State
+        const pomodoroSettings = {
+            workDuration: 25 * 60, // 25 minutes in seconds
+            shortBreakDuration: 5 * 60, // 5 minutes
+            longBreakDuration: 15 * 60, // 15 minutes
+            sessionsBeforeLongBreak: 4,
+            currentMode: 'work', // 'work', 'break', 'long-break'
+            isRunning: false,
+            timeLeft: 25 * 60,
+            sessionsCompleted: 0,
+            timerInterval: null
+        };
+        
+        // Update all clocks
+        function updateClocks() {
+            const now = new Date();
+            
+            // Update user's local time
+            document.getElementById('local-time').textContent = formatTime(now) + ' (Local)';
+            document.getElementById('current-time').textContent = formatTime(now);
+            document.getElementById('current-date').textContent = formatDate(now);
+            
+            // UTC
+            const utcTime = new Date(now.getTime() + now.getTimezoneOffset() * 60000);
+            document.getElementById('utc-time').textContent = formatTime(utcTime) + ' UTC';
+            
+            // Update major city times
+            majorCities.forEach(city => {
+                const options = { timeZone: city.timezone };
+                const cityTime = new Date(now.toLocaleString('en-US', options));
+                
+                document.getElementById(`${city.id}-time`).textContent = formatTime(cityTime);
+                document.getElementById(`${city.id}-date`).textContent = formatDate(cityTime);
+            });
+            
+            // Update clock hands
+            updateClockHands(now);
+            
+            // Update day/night status and background
+            updateDayNightStatus(now);
+            
+            // Update moon phase
+            updateMoonPhase(now);
+        }
+        
+        function formatTime(date) {
+            let hours = date.getHours();
+            let minutes = date.getMinutes();
+            let seconds = date.getSeconds();
+            
+            hours = hours < 10 ? '0' + hours : hours;
+            minutes = minutes < 10 ? '0' + minutes : minutes;
+            seconds = seconds < 10 ? '0' + seconds : seconds;
+            
+            return `${hours}:${minutes}:${seconds}`;
+        }
+        
+        function formatDate(date) {
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            return `${months[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
+        }
+        
+        function updateClockHands(now) {
+            const hours = now.getHours() % 12;
+            const minutes = now.getMinutes();
+            const seconds = now.getSeconds();
+            
+            const hourDeg = (hours * 30) + (minutes * 0.5);
+            const minuteDeg = minutes * 6;
+            const secondDeg = seconds * 6;
+            
+            // Create clock hands if they don't exist
+            if (!document.getElementById('hour-hand')) {
+                const clockFace = document.querySelector('.clock-face');
+                
+                // Hour hand
+                const hourHand = document.createElement('div');
+                hourHand.id = 'hour-hand';
+                hourHand.className = 'clock-hand absolute w-1 h-8 bg-blue-400 rounded-full top-1/2 left-1/2 -ml-0.5 -mt-8';
+                hourHand.style.transform = `rotate(${hourDeg}deg)`;
+                clockFace.appendChild(hourHand);
+                
+                // Minute hand
+                const minuteHand = document.createElement('div');
+                minuteHand.id = 'minute-hand';
+                minuteHand.className = 'clock-hand absolute w-1 h-12 bg-green-400 rounded-full top-1/2 left-1/2 -ml-0.5 -mt-12';
+                minuteHand.style.transform = `rotate(${minuteDeg}deg)`;
+                clockFace.appendChild(minuteHand);
+                
+                // Second hand
+                const secondHand = document.createElement('div');
+                secondHand.id = 'second-hand';
+                secondHand.className = 'clock-hand absolute w-0.5 h-14 bg-red-400 rounded-full top-1/2 left-1/2 -ml-0.25 -mt-14';
+                secondHand.style.transform = `rotate(${secondDeg}deg)`;
+                clockFace.appendChild(secondHand);
+                
+                // Center pin
+                const centerPin = document.createElement('div');
+                centerPin.className = 'absolute w-3 h-3 bg-white rounded-full top-1/2 left-1/2 -ml-1.5 -mt-1.5 z-10';
+                clockFace.appendChild(centerPin);
+            } else {
+                // Update existing hands
+                document.getElementById('hour-hand').style.transform = `rotate(${hourDeg}deg)`;
+                document.getElementById('minute-hand').style.transform = `rotate(${minuteDeg}deg)`;
+                document.getElementById('second-hand').style.transform = `rotate(${secondDeg}deg)`;
+            }
+        }
+        
+        function updateDayNightStatus(now) {
+            const hours = now.getHours();
+            const isDaytime = hours >= 6 && hours < 18;
+            userLocation.isDaytime = isDaytime;
+            
+            // Update background
+            document.body.classList.remove('day-bg', 'night-bg');
+            document.body.classList.add(isDaytime ? 'day-bg' : 'night-bg');
+            
+            // Update celestial display
+            const celestialDisplay = document.getElementById('celestial-display');
+            celestialDisplay.innerHTML = '';
+            
+            if (isDaytime) {
+                // Add sun
+                const sun = document.createElement('div');
+                sun.className = 'sun-position celestial-body';
+                sun.style.left = `${50 + 40 * Math.cos((hours / 24) * 2 * Math.PI - Math.PI/2)}%`;
+                sun.style.top = `${50 + 40 * Math.sin((hours / 24) * 2 * Math.PI - Math.PI/2)}%`;
+                celestialDisplay.appendChild(sun);
+                
+                document.getElementById('day-night-info').innerHTML = `
+                    <div class="flex justify-between">
+                        <span>Sunrise: <span>06:23</span></span>
+                        <span>Sunset: <span>18:47</span></span>
+                    </div>
+                    <div class="h-1 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-full my-2"></div>
+                    <div class="text-center">Current sun position: <span>${getSunPositionText(hours)}</span></div>
+                `;
+            } else {
+                // Add moon
+                const moon = document.createElement('div');
+                moon.className = 'moon-position celestial-body';
+                moon.style.left = `${50 + 40 * Math.cos((hours / 24) * 2 * Math.PI - Math.PI/2)}%`;
+                moon.style.top = `${50 + 40 * Math.sin((hours / 24) * 2 * Math.PI - Math.PI/2)}%`;
+                celestialDisplay.appendChild(moon);
+                
+                document.getElementById('day-night-info').innerHTML = `
+                    <div class="flex justify-between">
+                        <span>Moonrise: <span>20:15</span></span>
+                        <span>Moonset: <span>07:32</span></span>
+                    </div>
+                    <div class="h-1 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full my-2"></div>
+                    <div class="text-center">Current moon position: <span>${getMoonPositionText(hours)}</span></div>
+                `;
+            }
+        }
+        
+        function getSunPositionText(hours) {
+            if (hours >= 5 && hours < 8) return "early morning";
+            if (hours >= 8 && hours < 11) return "morning";
+            if (hours >= 11 && hours < 13) return "noon";
+            if (hours >= 13 && hours < 16) return "afternoon";
+            if (hours >= 16 && hours < 18) return "evening";
+            return "daytime";
+        }
+        
+        function getMoonPositionText(hours) {
+            if (hours >= 18 && hours < 21) return "early night";
+            if (hours >= 21 && hours < 24) return "night";
+            if (hours >= 0 && hours < 3) return "midnight";
+            if (hours >= 3 && hours < 6) return "late night";
+            return "nighttime";
+        }
+        
+        function updateMoonPhase(now) {
+            // Simplified moon phase calculation
+            const phase = (now.getDate() % 29.53) / 29.53;
+            
+            const moonLight = document.getElementById('moon-phase');
+            let phaseName = "";
+            let illumination = 0;
+            
+            if (phase < 0.5) {
+                // Waxing (growing)
+                illumination = phase * 2;
+                if (illumination < 0.25) phaseName = "Waxing Crescent";
+                else if (illumination < 0.75) phaseName = "Waxing Gibbous";
+                else phaseName = "Full Moon";
+            } else {
+                // Waning (shrinking)
+                illumination = (1 - phase) * 2;
+                if (illumination < 0.25) phaseName = "Waning Crescent";
+                else if (illumination < 0.75) phaseName = "Waning Gibbous";
+                else phaseName = "New Moon";
+            }
+            
+            // Position the light part of the moon
+            moonLight.style.transform = `translateX(${(illumination - 0.5) * 60}px)`;
+            
+            // Update moon info
+            document.getElementById('moon-phase-name').textContent = phaseName;
+            document.getElementById('moon-illumination').textContent = Math.round(illumination * 100) + "%";
+            document.getElementById('moon-age').textContent = Math.round(phase * 29.53) + " days";
+            document.getElementById('next-full-moon').textContent = (15 - now.getDate() % 15) + " days";
+            
+            // Moon signs (simplified)
+            const signs = ["Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo", "Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces"];
+            document.getElementById('moon-sign').textContent = signs[now.getDate() % 12];
+        }
+        
+        // Get user's location
+        function getUserLocation() {
+            // First try with browser geolocation
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    position => {
+                        // Use reverse geocoding to get city/country
+                        fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${position.coords.latitude}&longitude=${position.coords.longitude}&localityLanguage=en`)
+                            .then(response => response.json())
+                            .then(data => {
+                                userLocation.city = data.city || data.locality || "Unknown";
+                                userLocation.country = data.countryName || "Unknown";
+                                updateLocationDisplay();
+                            })
+                            .catch(() => {
+                                // Fallback to timezone detection
+                                detectLocationFromTimezone();
+                            });
+                    },
+                    () => {
+                        // If geolocation fails, use timezone detection
+                        detectLocationFromTimezone();
+                    }
+                );
+            } else {
+                // Fallback to timezone detection
+                detectLocationFromTimezone();
+            }
+        }
+        
+        function detectLocationFromTimezone() {
+            const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+            userLocation.timezone = timezone;
+            
+            // Simple mapping of timezones to cities
+            const timezoneMap = {
+                "Asia/Shanghai": { city: "Shanghai", country: "China" },
+                "America/New_York": { city: "New York", country: "United States" },
+                "Europe/London": { city: "London", country: "United Kingdom" },
+                "Asia/Tokyo": { city: "Tokyo", country: "Japan" },
+                "Australia/Sydney": { city: "Sydney", country: "Australia" },
+                "Europe/Paris": { city: "Paris", country: "France" },
+                "Europe/Berlin": { city: "Berlin", country: "Germany" }
+            };
+            
+            if (timezoneMap[timezone]) {
+                userLocation.city = timezoneMap[timezone].city;
+                userLocation.country = timezoneMap[timezone].country;
+            } else {
+                // Extract city name from timezone string as fallback
+                const parts = timezone.split('/');
+                userLocation.city = parts[parts.length - 1].replace(/_/g, ' ');
+                userLocation.country = parts[0];
+            }
+            
+            updateLocationDisplay();
+        }
+        
+        function updateLocationDisplay() {
+            document.getElementById('current-city').textContent = userLocation.city;
+            document.getElementById('current-country').textContent = userLocation.country;
+            
+            // Format timezone for display (e.g., "Asia/Shanghai" -> "CST (UTC+8)")
+            const timezoneParts = userLocation.timezone.split('/');
+            const region = timezoneParts[0];
+            const city = timezoneParts[1] ? timezoneParts[1].replace(/_/g, ' ') : '';
+            
+            // Get timezone offset
+            const now = new Date();
+            const offset = -now.getTimezoneOffset() / 60;
+            const offsetStr = offset >= 0 ? `UTC+${offset}` : `UTC${offset}`;
+            
+            // Common timezone abbreviations
+            const tzAbbr = {
+                "America/New_York": "EST",
+                "Europe/London": "GMT",
+                "Asia/Shanghai": "CST",
+                "Asia/Tokyo": "JST",
+                "Australia/Sydney": "AEST"
+            };
+            
+            const abbr = tzAbbr[userLocation.timezone] || offsetStr;
+            
+            document.getElementById('current-timezone').innerHTML = `
+                <i class="fas fa-clock mr-1 text-green-300"></i> ${abbr} (${offsetStr})
+            `;
+            
+            // Update flag icon based on country
+            const flagIcons = {
+                "China": "flag",
+                "United States": "flag-usa",
+                "United Kingdom": "flag-uk",
+                "Japan": "flag",
+                "Australia": "flag",
+                "France": "flag",
+                "Germany": "flag"
+            };
+            
+            const flagIcon = flagIcons[userLocation.country] || "flag";
+            document.getElementById('current-timezone').querySelector('i').className = `fas fa-${flagIcon} mr-1 text-green-300`;
+        }
+        
+        // Pomodoro Timer Functions
+        function initPomodoroTimer() {
+            // Set up progress ring
+            const circle = document.querySelector('.progress-ring-circle');
+            const radius = circle.r.baseVal.value;
+            const circumference = radius * 2 * Math.PI;
+            
+            circle.style.strokeDasharray = `${circumference} ${circumference}`;
+            circle.style.strokeDashoffset = circumference;
+            
+            // Set initial timer display
+            updatePomodoroDisplay();
+            
+            // Set up event listeners
+            document.getElementById('pomodoro-start').addEventListener('click', togglePomodoroTimer);
+            document.getElementById('pomodoro-reset').addEventListener('click', resetPomodoroTimer);
+            
+            document.querySelectorAll('[data-mode]').forEach(button => {
+                button.addEventListener('click', function() {
+                    setPomodoroMode(this.dataset.mode);
+                });
+            });
+        }
+        
+        function togglePomodoroTimer() {
+            if (pomodoroSettings.isRunning) {
+                pausePomodoroTimer();
+            } else {
+                startPomodoroTimer();
+            }
+        }
+        
+        function startPomodoroTimer() {
+            if (pomodoroSettings.timeLeft <= 0) {
+                // If timer is at 0, reset it first
+                resetPomodoroTimer();
+                return;
+            }
+            
+            pomodoroSettings.isRunning = true;
+            document.getElementById('pomodoro-start').innerHTML = '<i class="fas fa-pause mr-1"></i> Pause';
+            
+            pomodoroSettings.timerInterval = setInterval(() => {
+                pomodoroSettings.timeLeft--;
+                updatePomodoroDisplay();
+                
+                if (pomodoroSettings.timeLeft <= 0) {
+                    clearInterval(pomodoroSettings.timerInterval);
+                    pomodoroComplete();
+                }
+            }, 1000);
+        }
+        
+        function pausePomodoroTimer() {
+            pomodoroSettings.isRunning = false;
+            clearInterval(pomodoroSettings.timerInterval);
+            document.getElementById('pomodoro-start').innerHTML = '<i class="fas fa-play mr-1"></i> Start';
+        }
+        
+        function resetPomodoroTimer() {
+            pausePomodoroTimer();
+            
+            // Reset time based on current mode
+            switch (pomodoroSettings.currentMode) {
+                case 'work':
+                    pomodoroSettings.timeLeft = pomodoroSettings.workDuration;
+                    break;
+                case 'break':
+                    pomodoroSettings.timeLeft = pomodoroSettings.shortBreakDuration;
+                    break;
+                case 'long-break':
+                    pomodoroSettings.timeLeft = pomodoroSettings.longBreakDuration;
+                    break;
+            }
+            
+            updatePomodoroDisplay();
+        }
+        
+        function pomodoroComplete() {
+            // Play sound
+            const audio = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-alarm-digital-clock-beep-989.mp3');
+            audio.play();
+            
+            pomodoroSettings.isRunning = false;
+            
+            // Update session count if work session completed
+            if (pomodoroSettings.currentMode === 'work') {
+                pomodoroSettings.sessionsCompleted++;
+                document.getElementById('work-sessions').textContent = `${pomodoroSettings.sessionsCompleted}/${pomodoroSettings.sessionsBeforeLongBreak}`;
+                
+                // Determine next session
+                const nextMode = pomodoroSettings.sessionsCompleted % pomodoroSettings.sessionsBeforeLongBreak === 0 ? 
+                    'long-break' : 'break';
+                
+                setPomodoroMode(nextMode);
+                document.getElementById('next-session').textContent = nextMode === 'long-break' ? 'Long Break' : 'Break';
+            } else {
+                // After break, go back to work
+                setPomodoroMode('work');
+                document.getElementById('next-session').textContent = 'Work';
+            }
+            
+            // Show notification
+            const notification = document.createElement('div');
+            notification.className = 'fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg';
+            notification.textContent = pomodoroSettings.currentMode === 'work' ? 
+                'Work session complete! Time for a break.' : 
+                'Break over! Time to get back to work.';
+            
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 3000);
+        }
+        
+        function setPomodoroMode(mode) {
+            pomodoroSettings.currentMode = mode;
+            
+            // Update UI
+            const timerCard = document.getElementById('pomodoro-timer');
+            timerCard.classList.remove('work-mode', 'break-mode', 'long-break-mode');
+            
+            switch (mode) {
+                case 'work':
+                    timerCard.classList.add('work-mode');
+                    pomodoroSettings.timeLeft = pomodoroSettings.workDuration;
+                    document.getElementById('pomodoro-status').textContent = 'Work';
+                    document.getElementById('pomodoro-status').className = 'font-bold text-red-400';
+                    break;
+                case 'break':
+                    timerCard.classList.add('break-mode');
+                    pomodoroSettings.timeLeft = pomodoroSettings.shortBreakDuration;
+                    document.getElementById('pomodoro-status').textContent = 'Short Break';
+                    document.getElementById('pomodoro-status').className = 'font-bold text-green-400';
+                    break;
+                case 'long-break':
+                    timerCard.classList.add('long-break-mode');
+                    pomodoroSettings.timeLeft = pomodoroSettings.longBreakDuration;
+                    document.getElementById('pomodoro-status').textContent = 'Long Break';
+                    document.getElementById('pomodoro-status').className = 'font-bold text-blue-400';
+                    break;
+            }
+            
+            // Update progress ring color
+            const circle = document.querySelector('.progress-ring-circle');
+            switch (mode) {
+                case 'work':
+                    circle.style.stroke = '#ef4444'; // red-500
+                    break;
+                case 'break':
+                    circle.style.stroke = '#10b981'; // green-500
+                    break;
+                case 'long-break':
+                    circle.style.stroke = '#3b82f6'; // blue-500
+                    break;
+            }
+            
+            updatePomodoroDisplay();
+        }
+        
+        function updatePomodoroDisplay() {
+            // Update time display
+            const minutes = Math.floor(pomodoroSettings.timeLeft / 60);
+            const seconds = pomodoroSettings.timeLeft % 60;
+            document.getElementById('pomodoro-time').textContent = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            // Update progress ring
+            const circle = document.querySelector('.progress-ring-circle');
+            const radius = circle.r.baseVal.value;
+            const circumference = radius * 2 * Math.PI;
+            
+            let timeTotal;
+            switch (pomodoroSettings.currentMode) {
+                case 'work':
+                    timeTotal = pomodoroSettings.workDuration;
+                    break;
+                case 'break':
+                    timeTotal = pomodoroSettings.shortBreakDuration;
+                    break;
+                case 'long-break':
+                    timeTotal = pomodoroSettings.longBreakDuration;
+                    break;
+            }
+            
+            const offset = circumference - (pomodoroSettings.timeLeft / timeTotal) * circumference;
+            circle.style.strokeDashoffset = offset;
+            
+            // Update progress bar
+            const progressPercent = 100 - (pomodoroSettings.timeLeft / timeTotal) * 100;
+            document.getElementById('session-progress').style.width = `${progressPercent}%`;
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set initial background (will be updated after location detection)
+            document.body.classList.add('day-bg');
+            
+            // Get user location and update display
+            getUserLocation();
+            
+            // Start clock updates
+            updateClocks();
+            setInterval(updateClocks, 1000);
+            
+            // Initialize Pomodoro Timer
+            initPomodoroTimer();
+            
+            // Add some interactive elements
+            const cityCards = document.querySelectorAll('.city-card');
+            cityCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    cityCards.forEach(c => c.classList.remove('ring-2', 'ring-blue-400'));
+                    this.classList.add('ring-2', 'ring-blue-400');
+                });
+            });
+        });
+    </script>
+</body>
+</html>
