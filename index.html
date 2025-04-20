@@ -159,27 +159,28 @@
 <body class="min-h-screen">
     <div class="earth-overlay"></div>
     
-    <header class="container mx-auto px-4 py-8">
-        <div class="flex justify-between items-center">
-            <div class="flex items-center">
-                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-green-400 to-blue-500 flex items-center justify-center tech-glow">
-                    <i class="fas fa-globe text-white text-xl"></i>
+    <header class="bg-slate-900 bg-opacity-80 py-4 mb-6 sticky top-0 z-50 shadow-lg">
+        <div class="container mx-auto px-4 flex flex-col sm:flex-row justify-between items-center">
+            <div class="flex items-center mb-2 sm:mb-0">
+                <div class="w-10 h-10 rounded-full bg-gradient-to-r from-green-400 to-blue-500 flex items-center justify-center">
+                    <i class="fas fa-clock text-white text-xl"></i>
                 </div>
                 <h1 class="ml-4 text-3xl font-bold bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent font-['Orbitron']">TIMEFE</h1>
             </div>
-            <div class="flex items-center space-x-4">
-                <div class="relative">
-                    <input type="text" placeholder="Search city..." class="bg-slate-800 bg-opacity-70 border border-slate-600 rounded-full py-2 px-4 pr-10 focus:outline-none focus:ring-2 focus:ring-green-400 text-white">
-                    <i class="fas fa-search absolute right-3 top-3 text-slate-400"></i>
-                </div>
-                <button class="bg-gradient-to-r from-green-500 to-blue-500 text-white px-6 py-2 rounded-full hover:opacity-90 transition">
-                    <i class="fas fa-plus mr-2"></i> Add City
-                </button>
+            <div class="slogan text-center sm:text-right text-lg font-['Orbitron'] bg-gradient-to-r from-green-300 to-blue-400 bg-clip-text text-transparent animate-pulse">
+                Make every second count with Timefe
             </div>
         </div>
     </header>
     
     <main class="container mx-auto px-4 py-8">
+        <!-- Slogan Banner -->
+        <div class="mb-8 p-4 bg-slate-800 bg-opacity-70 rounded-xl tech-border text-center">
+            <h2 class="text-2xl md:text-3xl font-['Orbitron'] font-bold">
+                <span class="bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">Time is your most precious wealth</span>
+            </h2>
+            <!-- <p class="text-slate-300 mt-2 italic">Make every second count with Timefe</p> -->
+        </div>
         <!-- World Clock Section (Prioritized at top) -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
             <!-- Combined World Clock & Moon Phase -->
