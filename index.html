@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Timefe - Global Time Display</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" type="image/png" href="/favicon.png" sizes="32x32">
+    <!-- 或者使用 .ico 格式 -->
+    <!-- <link rel="icon" href="/favicon.ico" type="image/x-icon"> -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;700&display=swap');
@@ -20,20 +23,24 @@
         }
         
         .day-bg {
-            background-image: url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop');
+            background-image: url('https://images.pexels.com/photos/586030/pexels-photo-586030.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1');
+            background-color: #c1440e; /* 火星日间橙红色备用背景色 */
+            background-blend-mode: soft-light;
         }
         
         .night-bg {
-            background-image: url('https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?q=80&w=2071&auto=format&fit=crop');
+            background-image: url('https://images.pexels.com/photos/1169754/pexels-photo-1169754.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1');
+            background-color: #5c1b0b; /* 火星夜间深红色备用背景色 */
+            background-blend-mode: color-burn;
         }
         
         .tech-border {
-            border: 1px solid rgba(74, 222, 128, 0.3);
-            box-shadow: 0 0 15px rgba(74, 222, 128, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.2);
         }
         
         .tech-glow {
-            box-shadow: 0 0 20px rgba(74, 222, 128, 0.3);
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
         }
         
         .city-card {
@@ -56,21 +63,37 @@
             transition: transform 0.5s cubic-bezier(0.4, 2.3, 0.3, 1);
         }
         
-        .earth-overlay {
+        .mars-overlay {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(15, 23, 42, 0.7);
+            background: linear-gradient(to bottom, rgba(146, 20, 12, 0.1), rgba(0, 0, 0, 0.7));
             z-index: -1;
+        }
+        
+        /* 添加生物痕迹元素 */
+        .bio-trace {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            background-image: url('https://images.pexels.com/photos/3801463/pexels-photo-3801463.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1');
+            background-size: cover;
+            opacity: 0.15;
+            mix-blend-mode: screen;
+            filter: hue-rotate(30deg) contrast(1.2);
+            z-index: -1;
+            pointer-events: none;
         }
         
         .timezone-line {
             position: absolute;
             height: 100%;
             width: 1px;
-            background: linear-gradient(to bottom, transparent, #4ade80, transparent);
+            background: linear-gradient(to bottom, transparent, #ef4444, transparent);
             transform-origin: top center;
         }
         
@@ -125,7 +148,17 @@
         .celestial-body {
             transition: all 1s ease;
         }
-        
+        #pomodoro-time {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          /* 保持字体大小和加粗 */
+          font-size: 2.5rem; /* 或 text-4xl */
+          font-weight: bold;
+          font-family: 'Orbitron', sans-serif;
+          pointer-events: none; /* 避免点击事件穿透 */
+        }
         .pomodoro-timer {
             font-family: 'Orbitron', sans-serif;
         }
@@ -154,10 +187,356 @@
             background: rgba(59, 130, 246, 0.2);
             border-color: rgba(59, 130, 246, 0.5);
         }
+        
+        /* Deep Space Network Communication Styles */
+        .shadow-glow-blue {
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.7);
+        }
+        
+        .shadow-glow-cyan {
+            box-shadow: 0 0 12px rgba(8, 145, 178, 0.7);
+        }
+        
+        .shadow-glow-red {
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.7);
+        }
+        
+        .shadow-glow-orange {
+            box-shadow: 0 0 10px rgba(249, 115, 22, 0.7);
+        }
+        
+        .pulse-slow {
+            animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        
+        .pulse-medium {
+            animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        
+        .pulse-fast {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.8;
+                transform: scale(0.95);
+            }
+        }
+        
+        .signal-waves {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            z-index: -1;
+        }
+        
+        .earth-waves {
+            animation: signal-wave 4s linear infinite;
+            box-shadow: 0 0 0 rgba(59, 130, 246, 0.4);
+        }
+        
+        .satellite-waves {
+            animation: signal-wave 3s linear infinite;
+            box-shadow: 0 0 0 rgba(8, 145, 178, 0.4);
+        }
+        
+        .mars-waves {
+            animation: signal-wave 4.5s linear infinite;
+            box-shadow: 0 0 0 rgba(239, 68, 68, 0.4);
+        }
+        
+        .spacecraft-waves {
+            animation: signal-wave 2.5s linear infinite;
+            box-shadow: 0 0 0 rgba(249, 115, 22, 0.4);
+        }
+        
+        @keyframes signal-wave {
+            0% {
+                box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4);
+            }
+            70% {
+                box-shadow: 0 0 0 20px rgba(255, 255, 255, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+            }
+        }
+        
+        .comm-line {
+            stroke: rgba(255, 255, 255, 0.2);
+            stroke-width: 1;
+            stroke-dasharray: 5, 5;
+        }
+        
+        .earth-satellite-line {
+            animation: dash-animation 30s linear infinite, earth-satellite-pulse 4s ease-in-out infinite;
+            stroke: rgba(59, 130, 246, 0.4);
+        }
+        
+        .satellite-mars-line {
+            animation: dash-animation 40s linear infinite reverse, satellite-mars-pulse 5s ease-in-out infinite;
+            stroke: rgba(8, 145, 178, 0.4);
+        }
+        
+        .mars-spacecraft-line {
+            animation: dash-animation 20s linear infinite, mars-spacecraft-pulse 3s ease-in-out infinite;
+            stroke: rgba(239, 68, 68, 0.4);
+        }
+        
+        .earth-spacecraft-line {
+            animation: dash-animation 60s linear infinite reverse, earth-spacecraft-pulse 10s ease-in-out infinite;
+            stroke: rgba(59, 130, 246, 0.2);
+            stroke-dasharray: 2, 8;
+        }
+        
+        @keyframes dash-animation {
+            to {
+                stroke-dashoffset: 1000;
+            }
+        }
+        
+        @keyframes earth-satellite-pulse {
+            0%, 100% { stroke-width: 1; }
+            50% { stroke-width: 2; }
+        }
+        
+        @keyframes satellite-mars-pulse {
+            0%, 100% { stroke-width: 1; }
+            50% { stroke-width: 2; }
+        }
+        
+        @keyframes mars-spacecraft-pulse {
+            0%, 100% { stroke-width: 1; }
+            50% { stroke-width: 2; }
+        }
+        
+        @keyframes earth-spacecraft-pulse {
+            0%, 100% { stroke-width: 0.5; }
+            50% { stroke-width: 1.5; }
+        }
+        
+        @keyframes mars-phobos-pulse {
+            0%, 100% { stroke-width: 0.8; }
+            50% { stroke-width: 1.8; }
+        }
+        
+        @keyframes earth-rover-pulse {
+            0%, 100% { stroke-width: 0.7; }
+            50% { stroke-width: 1.7; }
+        }
+        
+        @keyframes phobos-spacecraft-pulse {
+            0%, 100% { stroke-width: 0.4; }
+            50% { stroke-width: 1.2; }
+        }
+        
+        @keyframes rover-mars-pulse {
+            0%, 100% { stroke-width: 0.5; }
+            50% { stroke-width: 1.3; }
+        }
+        
+        .data-packet {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            z-index: 10;
+            filter: blur(1px);
+        }
+        
+        .earth-to-satellite {
+            background: rgba(59, 130, 246, 0.8);
+            box-shadow: 0 0 5px rgba(59, 130, 246, 0.8);
+            animation: earth-to-satellite-move 8s linear infinite;
+        }
+        
+        .satellite-to-mars {
+            background: rgba(8, 145, 178, 0.8);
+            box-shadow: 0 0 5px rgba(8, 145, 178, 0.8);
+            animation: satellite-to-mars-move 12s linear infinite;
+        }
+        
+        .mars-to-spacecraft {
+            background: rgba(239, 68, 68, 0.8);
+            box-shadow: 0 0 5px rgba(239, 68, 68, 0.8);
+            animation: mars-to-spacecraft-move 6s linear infinite;
+        }
+        
+        .spacecraft-to-earth {
+            background: rgba(249, 115, 22, 0.8);
+            box-shadow: 0 0 5px rgba(249, 115, 22, 0.8);
+            animation: spacecraft-to-earth-move 15s linear infinite;
+        }
+        
+        .mars-to-phobos {
+            background: rgba(168, 85, 247, 0.8);
+            box-shadow: 0 0 5px rgba(168, 85, 247, 0.8);
+            animation: mars-to-phobos-move 5s linear infinite;
+        }
+        
+        .earth-to-rover {
+            background: rgba(22, 163, 74, 0.8);
+            box-shadow: 0 0 5px rgba(22, 163, 74, 0.8);
+            animation: earth-to-rover-move 10s linear infinite;
+        }
+        
+        @keyframes mars-to-phobos-move {
+            0% { left: 75%; top: 20%; opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { left: 60%; top: 33%; opacity: 0; }
+        }
+        
+        @keyframes earth-to-rover-move {
+            0% { left: 15%; top: 80%; opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { left: 25%; top: 75%; opacity: 0; }
+        }
+        
+        @keyframes earth-to-satellite-move {
+            0% { left: 15%; top: 80%; opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { left: 33%; top: 25%; opacity: 0; }
+        }
+        
+        @keyframes satellite-to-mars-move {
+            0% { left: 33%; top: 25%; opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { left: 75%; top: 20%; opacity: 0; }
+        }
+        
+        @keyframes mars-to-spacecraft-move {
+            0% { left: 75%; top: 20%; opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { left: 85%; top: 66%; opacity: 0; }
+        }
+        
+        @keyframes spacecraft-to-earth-move {
+            0% { left: 85%; top: 66%; opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { left: 15%; top: 80%; opacity: 0; }
+        }
+        
+        /* Space objects animations */
+        .star-twinkle {
+            animation: twinkle 4s ease-in-out infinite;
+        }
+        
+        .star-twinkle-slow {
+            animation: twinkle 6s ease-in-out infinite;
+        }
+        
+        .star-twinkle-fast {
+            animation: twinkle 2s ease-in-out infinite;
+        }
+        
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.2; }
+            50% { opacity: 1; }
+        }
+        
+        .rotate-slow {
+            animation: rotate 30s linear infinite;
+        }
+        
+        .rotate-medium {
+            animation: rotate 20s linear infinite;
+        }
+        
+        .rotate-fast {
+            animation: rotate 10s linear infinite;
+        }
+        
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .orbit {
+            transform-origin: center;
+        }
+        
+        .planet-glow-blue {
+            filter: drop-shadow(0 0 3px rgba(59, 130, 246, 0.7));
+        }
+        
+        .planet-glow-red {
+            filter: drop-shadow(0 0 3px rgba(239, 68, 68, 0.7));
+        }
+        
+        .planet-glow-orange {
+            filter: drop-shadow(0 0 3px rgba(249, 115, 22, 0.7));
+        }
+        
+        .planet-glow-purple {
+            filter: drop-shadow(0 0 3px rgba(168, 85, 247, 0.7));
+        }
+        
+        /* Asteroid and debris animations */
+        .asteroid {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background-color: #94a3b8;
+            border-radius: 50%;
+            opacity: 0.7;
+        }
+        
+        .asteroid-path {
+            animation: asteroid-move 20s linear infinite;
+        }
+        
+        @keyframes asteroid-move {
+            0% { transform: translateX(-100vw) translateY(10vh) rotate(0deg); }
+            100% { transform: translateX(100vw) translateY(50vh) rotate(360deg); }
+        }
+        
+        /* Space dust particles */
+        .space-dust {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background-color: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+        }
+        
+        .dust-slow {
+            animation: dust-drift 15s linear infinite;
+        }
+        
+        .dust-medium {
+            animation: dust-drift 10s linear infinite;
+        }
+        
+        .dust-fast {
+            animation: dust-drift 5s linear infinite;
+        }
+        
+        @keyframes dust-drift {
+            0% { transform: translateX(0) translateY(0); opacity: 0; }
+            10% { opacity: 0.7; }
+            90% { opacity: 0.7; }
+            100% { transform: translateX(50px) translateY(30px); opacity: 0; }
+        }
     </style>
 </head>
-<body class="min-h-screen">
-    <div class="earth-overlay"></div>
+<body class="bg-slate-900 day-bg">
+    <div class="mars-overlay"></div>
+    <div class="bio-trace"></div>
     
     <header class="bg-slate-900 bg-opacity-80 py-4 mb-6 sticky top-0 z-50 shadow-lg">
         <div class="container mx-auto px-4 flex flex-col sm:flex-row justify-between items-center">
@@ -174,305 +553,635 @@
     </header>
     
     <main class="container mx-auto px-4 py-8">
-        <!-- Slogan Banner -->
-        <div class="mb-8 p-4 bg-slate-800 bg-opacity-70 rounded-xl tech-border text-center">
-            <h2 class="text-2xl md:text-3xl font-['Orbitron'] font-bold">
-                <span class="bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">Time is your most precious wealth</span>
-            </h2>
-            <!-- <p class="text-slate-300 mt-2 italic">Make every second count with Timefe</p> -->
-        </div>
         <!-- World Clock Section (Prioritized at top) -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
-            <!-- Combined World Clock & Moon Phase -->
-            <div class="bg-slate-800 bg-opacity-70 rounded-xl p-6 tech-border">
+            <!-- 地球-火星通行证信息 - Dedicated Card -->            
+            <div class="bg-slate-800 bg-opacity-70 rounded-xl p-6 relative overflow-hidden" style="border: 1px solid rgba(239, 68, 68, 0.4); box-shadow: 0 0 15px rgba(239, 68, 68, 0.2);">
+                <!-- Decorative elements -->                
+                <div class="absolute -right-16 -top-16 w-40 h-40 bg-red-500 rounded-full opacity-10"></div>
+                <div class="absolute -left-10 -bottom-10 w-32 h-32 bg-orange-500 rounded-full opacity-10"></div>
+                <div class="absolute left-1/2 top-1/3 w-20 h-20 bg-yellow-500 rounded-full opacity-5 blur-xl"></div>
+                
                 <h3 class="text-xl font-bold mb-4 flex items-center">
-                    <i class="fas fa-globe-americas mr-2 text-blue-400"></i> World Clock & Moon
+                    <i class="fas fa-passport mr-2 text-red-400"></i> EARTH-MARS TRANSIT PASS
                 </h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="space-y-4">
-                        <div class="flex justify-between items-center">
-                            <span>UTC</span>
-                            <span class="font-mono" id="utc-time">00:00:00</span>
-                        </div>
-                        <div class="flex justify-between items-center">
-                            <span>Your Local Time</span>
-                            <span class="font-mono" id="local-time">00:00:00</span>
-                        </div>
-                        <div class="h-1 bg-gradient-to-r from-blue-500 to-green-500 rounded-full my-2"></div>
-                        <div class="grid grid-cols-2 gap-2">
-                            <div class="bg-slate-700 bg-opacity-50 p-2 rounded text-center">
-                                <div class="text-xs text-slate-400">Daylight</div>
-                                <div id="daylight-hours">12h 34m</div>
-                            </div>
-                            <div class="bg-slate-700 bg-opacity-50 p-2 rounded text-center">
-                                <div class="text-xs text-slate-400">Night</div>
-                                <div id="night-hours">11h 26m</div>
-                            </div>
+                
+                <!-- Travel status display -->
+                <div class="flex items-center justify-between mb-5">
+                    <div class="flex items-center">
+                        <div class="bg-red-900 bg-opacity-50 px-3 py-2 rounded-lg text-red-200 font-['Orbitron'] text-lg">
+                            <span id="next-launch-window">NEXT LAUNCH WINDOW</span>
                         </div>
                     </div>
+                    <div class="text-sm text-red-300 bg-slate-900 bg-opacity-60 px-3 py-1 rounded-full">
+                        <span id="countdown-display">T-43 DAYS 12 HRS</span>
+                    </div>
+                </div>
+                
+                <!-- Travel data container -->
+                <div class="bg-slate-900 bg-opacity-60 rounded-lg p-4 border border-red-900 border-opacity-30 shadow-inner mb-4">
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="bg-slate-800 bg-opacity-70 p-3 rounded-lg border border-red-900 border-opacity-20">
+                            <div class="text-xs text-red-300 uppercase tracking-wider mb-1">CURRENT DISTANCE</div>
+                            <div class="text-xl font-bold font-['Orbitron'] text-red-400">78.4 MILLION KM</div>
+                            <div class="text-xs text-slate-400 mt-1">LIGHT DELAY: 4 MIN 18 SEC</div>
+                        </div>
+                        
+                        <div class="bg-slate-800 bg-opacity-70 p-3 rounded-lg border border-red-900 border-opacity-20">
+                            <div class="text-xs text-red-300 uppercase tracking-wider mb-1">FLIGHT DURATION</div>
+                            <div class="text-xl font-bold font-['Orbitron'] text-red-400">204 DAYS</div>
+                            <div class="text-xs text-slate-400 mt-1">MINIMUM TRANSFER ORBIT</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Travel requirements with enhanced styling -->
+                <div class="bg-slate-900 bg-opacity-60 rounded-lg p-4 border border-red-900 border-opacity-30 shadow-inner relative overflow-hidden">
+                    <!-- Decorative tech elements -->
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-red-900 to-transparent opacity-10"></div>
+                    <div class="absolute -left-4 -bottom-4 w-16 h-16 bg-red-600 rounded-full opacity-5 blur-md"></div>
                     
-                    <div class="space-y-4">
-                        <div class="flex flex-col items-center">
-                            <div class="moon-phase mb-2">
-                                <div class="moon-light" id="moon-phase"></div>
+                    <h4 class="text-sm font-bold mb-3 text-red-300 flex items-center">
+                        <i class="fas fa-clipboard-list mr-2 text-xs"></i> INTERPLANETARY TRAVEL REQUIREMENTS
+                    </h4>
+                    
+                    <div class="space-y-3" id="travel-requirements">
+                        <div class="flex items-center bg-slate-800 bg-opacity-40 rounded-md p-2 border-l-2 border-red-500">
+                            <div class="w-8 h-8 rounded-full bg-red-900 bg-opacity-50 flex items-center justify-center mr-3">
+                                <i class="fas fa-radiation text-red-400 text-xs"></i>
                             </div>
-                            <div class="text-sm" id="moon-phase-name">Waxing Gibbous</div>
+                            <div class="flex-1">
+                                <div class="text-xs text-slate-400">RADIATION PROTECTION</div>
+                                <div class="text-sm text-red-400 font-bold font-['Orbitron']">SPE-5 / GCR-3</div>
+                            </div>
                         </div>
-                        <div class="text-sm space-y-2">
-                            <div>Illumination: <span id="moon-illumination">78%</span></div>
-                            <div>Age: <span id="moon-age">11.2 days</span></div>
-                            <div>Next Full Moon: <span id="next-full-moon">3 days</span></div>
+                        
+                        <div class="flex items-center bg-slate-800 bg-opacity-40 rounded-md p-2 border-l-2 border-red-500">
+                            <div class="w-8 h-8 rounded-full bg-red-900 bg-opacity-50 flex items-center justify-center mr-3">
+                                <i class="fas fa-lungs text-red-400 text-xs"></i>
+                            </div>
+                            <div class="flex-1">
+                                <div class="text-xs text-slate-400">LIFE SUPPORT</div>
+                                <div class="text-sm text-red-400 font-bold font-['Orbitron']">210 DAYS CLOSED LOOP</div>
+                            </div>
                         </div>
-                        <div class="mt-2 bg-slate-700 bg-opacity-50 p-2 rounded text-center pulse">
-                            <div class="text-xs text-slate-300">Current Moon Sign</div>
-                            <div class="font-bold" id="moon-sign">Leo</div>
+                        
+                        <div class="flex items-center bg-slate-800 bg-opacity-40 rounded-md p-2 border-l-2 border-red-500">
+                            <div class="w-8 h-8 rounded-full bg-red-900 bg-opacity-50 flex items-center justify-center mr-3">
+                                <i class="fas fa-rocket text-red-400 text-xs"></i>
+                            </div>
+                            <div class="flex-1">
+                                <div class="text-xs text-slate-400">PROPELLANT REQUIREMENT</div>
+                                <div class="text-sm text-red-400 font-bold font-['Orbitron']">Δv 6.3 KM/S</div>
+                            </div>
                         </div>
+                        
+                        <div class="flex items-center bg-slate-800 bg-opacity-40 rounded-md p-2 border-l-2 border-red-500">
+                            <div class="w-8 h-8 rounded-full bg-red-900 bg-opacity-50 flex items-center justify-center mr-3">
+                                <i class="fas fa-satellite-dish text-red-400 text-xs"></i>
+                            </div>
+                            <div class="flex-1">
+                                <div class="text-xs text-slate-400">COMMUNICATION DELAY</div>
+                                <div class="text-sm text-red-400 font-bold font-['Orbitron']">4-24 MIN (ONE-WAY)</div>
+                            </div>
+                        </div>
+                        
                     </div>
                 </div>
             </div>
             
-            <!-- Current Location Time -->
-            <div class="bg-slate-800 bg-opacity-70 rounded-xl p-6 tech-border relative overflow-hidden" id="current-location-card">
+            <!-- Current Location Time - Mars Theme -->
+            <div class="bg-slate-800 bg-opacity-70 rounded-xl p-6 relative overflow-hidden w-full" id="current-location-card" style="border: 1px solid rgba(220, 38, 38, 0.4); box-shadow: 0 0 15px rgba(220, 38, 38, 0.3);">
+                <!-- Mars-themed decorative elements -->
+                <div class="absolute -right-10 -top-10 w-32 h-32 bg-red-500 rounded-full opacity-20"></div>
+                <div class="absolute -left-5 -bottom-5 w-24 h-24 bg-orange-500 rounded-full opacity-10"></div>
+                
                 <h3 class="text-xl font-bold mb-4 flex items-center">
-                    <i class="fas fa-map-marker-alt mr-2 text-green-400"></i> Current Location
+                    <i class="fas fa-map-marker-alt mr-2 text-red-400"></i> Current Location
                 </h3>
                 <div class="flex justify-between items-start mb-4">
                     <div>
                         <h2 class="text-2xl font-bold" id="current-city">Detecting...</h2>
                         <p class="text-slate-400" id="current-country"></p>
                     </div>
-                    <div class="bg-green-900 bg-opacity-50 px-3 py-1 rounded-full text-sm flex items-center" id="current-timezone">
-                        <i class="fas fa-clock mr-1 text-green-300"></i> Loading...
+                    <div class="bg-red-900 bg-opacity-50 px-3 py-1 rounded-full text-sm flex items-center" id="current-timezone">
+                        <i class="fas fa-clock mr-1 text-red-300"></i> Loading...
                     </div>
                 </div>
-                <div class="flex justify-between items-center mb-6">
-                    <div class="text-5xl font-bold font-['Orbitron'] tracking-tighter" id="current-time">00:00:00</div>
-                    <div class="text-sm text-slate-400" id="current-date">Jan 1, 2023</div>
+                
+                <!-- Date display with Mars theme -->
+                <div class="flex justify-between items-center mb-6 w-full">
+                    <div class="text-5xl font-bold font-['Orbitron'] tracking-tighter bg-gradient-to-r from-red-500 to-orange-400 bg-clip-text text-transparent" id="current-time">00:00:00</div>
+                    <div class="text-xl font-bold font-['Orbitron'] tracking-tighter bg-gradient-to-r from-orange-400 to-red-500 bg-clip-text text-transparent" id="current-date">Apr 21, 2025</div>
                 </div>
-                <div class="relative h-48 bg-slate-900 rounded-lg overflow-hidden">
-                    <div id="celestial-display" class="absolute inset-0">
-                        <!-- Sun or moon will be placed here by JS -->
-                    </div>
-                    <div class="absolute inset-0 flex items-center justify-center">
-                        <div class="w-32 h-32 rounded-full clock-face relative">
-                            <!-- Clock hands will be added by JS -->
+                
+                <!-- Mars-themed info panel with improved layout -->
+                <div class="relative bg-slate-900 rounded-lg overflow-hidden p-5 border border-red-900 w-full shadow-inner">
+                    <!-- Decorative tech elements -->
+                    <div class="absolute top-0 right-0 w-full h-1 bg-gradient-to-r from-transparent via-red-500 to-transparent opacity-50"></div>
+                    <div class="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-red-500 via-transparent to-red-500 opacity-30"></div>
+                    
+                    <!-- Date metrics with enhanced Mars theme -->
+                    <div class="grid grid-cols-2 gap-6">
+                        <div class="bg-red-900 bg-opacity-30 p-4 rounded-lg transform transition-all duration-300 hover:bg-opacity-40 hover:shadow-md">
+                            <div class="text-xs text-red-300 mb-2 uppercase tracking-wider">Day of Month</div>
+                            <div class="flex items-center justify-center">
+                                <i class="fas fa-calendar-day text-red-400 mr-3 text-xl"></i>
+                                <span id="day-of-month" class="text-3xl font-['Orbitron'] font-bold bg-gradient-to-r from-red-400 to-orange-300 bg-clip-text text-transparent">--</span>
+                            </div>
+                        </div>
+                        <div class="bg-red-900 bg-opacity-30 p-4 rounded-lg transform transition-all duration-300 hover:bg-opacity-40 hover:shadow-md">
+                            <div class="text-xs text-red-300 mb-2 uppercase tracking-wider">Day of Year</div>
+                            <div class="flex items-center justify-center">
+                                <i class="fas fa-calendar-alt text-red-400 mr-3 text-xl"></i>
+                                <span id="day-of-year" class="text-3xl font-['Orbitron'] font-bold bg-gradient-to-r from-red-400 to-orange-300 bg-clip-text text-transparent">---</span>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="mt-4 text-sm text-slate-400">
-                    <div id="day-night-info">Detecting day/night cycle...</div>
+                
+                <div class="mt-4 text-sm text-orange-300 bg-slate-800 bg-opacity-60 p-2 rounded-lg border border-red-900 border-opacity-30">
+                    <div id="day-night-info" class="flex items-center justify-center">
+                        <i class="fas fa-sun text-orange-400 mr-2 pulse"></i> 
+                        <span>Earth time synchronized</span>
+                        <i class="fas fa-satellite text-orange-400 ml-2 pulse"></i>
+                    </div>
                 </div>
             </div>
             
-            <!-- Pomodoro Timer -->
-            <div class="bg-slate-800 bg-opacity-70 rounded-xl p-6 tech-border" id="pomodoro-timer">
+            <!-- Mars Shuttle Launch Simulator -->
+            <div class="bg-slate-800 bg-opacity-70 rounded-xl p-6 relative overflow-hidden" id="pomodoro-timer" style="border: 1px solid rgba(239, 68, 68, 0.4); box-shadow: 0 0 20px rgba(239, 68, 68, 0.2);">
+                <!-- Decorative elements -->
+                <div class="absolute -right-10 -top-10 w-32 h-32 bg-red-600 rounded-full opacity-10"></div>
+                <div class="absolute -left-5 -bottom-5 w-24 h-24 bg-orange-500 rounded-full opacity-10"></div>
+                
                 <h3 class="text-xl font-bold mb-4 flex items-center">
-                    <i class="fas fa-clock mr-2 text-red-400"></i> Pomodoro Timer
+                    <i class="fas fa-rocket mr-2 text-red-400"></i> Mars Shuttle Mission
                 </h3>
+                
                 <div class="flex flex-col items-center">
+                    <!-- Cockpit-style countdown display -->
                     <div class="relative w-48 h-48 flex items-center justify-center mb-4">
-                        <svg class="progress-ring w-full h-full" width="120" height="120">
-                            <circle class="progress-ring-circle" stroke-width="6" fill="transparent" r="52" cx="60" cy="60"/>
+                        <!-- Outer ring with tech styling -->
+                        <div class="absolute inset-0 rounded-full border-4 border-slate-700 bg-slate-900 bg-opacity-80 shadow-inner"></div>
+                        
+                        <!-- Animated thruster effects -->
+                        <div class="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-16 h-16 opacity-0" id="thruster-effect">
+                            <div class="w-full h-full bg-gradient-to-t from-orange-500 via-red-500 to-transparent rounded-full animate-pulse"></div>
+                        </div>
+                        
+                        <!-- Progress ring -->
+                        <svg class="progress-ring absolute inset-0 w-full h-full" width="192" height="192">
+                            <!-- Background track -->
+                            <circle stroke="rgba(239, 68, 68, 0.2)" stroke-width="6" fill="transparent" r="88" cx="96" cy="96"/>
+                            <!-- Progress indicator -->
+                            <circle class="progress-ring-circle" stroke="rgba(239, 68, 68, 0.8)" stroke-width="6" fill="transparent" r="88" cx="96" cy="96"/>
                         </svg>
-                        <div class="absolute text-4xl font-bold font-['Orbitron']" id="pomodoro-time">25:00</div>
+                        
+                        <!-- Central display with tech frame -->
+                        <div class="absolute inset-4 rounded-full bg-black bg-opacity-60 border border-red-900 flex items-center justify-center">
+                            <span id="pomodoro-time" class="text-4xl font-bold font-['Orbitron'] text-red-500 drop-shadow-glow">T-25:00</span>
+                        </div>
                     </div>
                     
+                    <!-- Mission control buttons -->
                     <div class="flex space-x-4 mb-4">
-                        <button class="px-4 py-2 rounded-full bg-slate-700 hover:bg-slate-600 transition" id="pomodoro-start">
-                            <i class="fas fa-play mr-1"></i> Start
+                        <button class="px-6 py-2 rounded-lg bg-red-900 hover:bg-red-800 text-red-100 transition flex items-center" id="pomodoro-start">
+                            <i class="fas fa-rocket mr-2"></i> Launch
                         </button>
-                        <button class="px-4 py-2 rounded-full bg-slate-700 hover:bg-slate-600 transition" id="pomodoro-reset">
-                            <i class="fas fa-redo mr-1"></i> Reset
+                        <button class="px-6 py-2 rounded-lg bg-slate-700 hover:bg-slate-600 transition flex items-center" id="pomodoro-reset">
+                            <i class="fas fa-sync-alt mr-2"></i> Abort
                         </button>
                     </div>
                     
-                    <div class="flex justify-between w-full mb-4">
-                        <div class="text-center">
-                            <div class="text-xs text-slate-400">Work</div>
-                            <div class="font-bold" id="work-sessions">0/4</div>
-                        </div>
-                        <div class="text-center">
-                            <div class="text-xs text-slate-400">Status</div>
-                            <div class="font-bold" id="pomodoro-status">Ready</div>
-                        </div>
-                        <div class="text-center">
-                            <div class="text-xs text-slate-400">Next</div>
-                            <div class="font-bold" id="next-session">Work</div>
+                    <!-- Mission status display -->
+                    <div class="w-full p-3 bg-black bg-opacity-50 rounded-lg border border-red-900 border-opacity-30 mb-4">
+                        <div class="flex justify-between w-full">
+                            <div class="text-center">
+                                <div class="text-xs text-red-300 uppercase tracking-wider">Mission Phase</div>
+                                <div class="font-bold font-['Orbitron'] text-red-400" id="work-sessions">0/4</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-xs text-red-300 uppercase tracking-wider">Status</div>
+                                <div class="font-bold font-['Orbitron'] text-red-400" id="pomodoro-status">Standby</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-xs text-red-300 uppercase tracking-wider">Next Phase</div>
+                                <div class="font-bold font-['Orbitron'] text-red-400" id="next-session">Launch</div>
+                            </div>
                         </div>
                     </div>
                     
-                    <div class="w-full bg-slate-700 rounded-full h-2 mb-4">
-                        <div class="bg-green-500 h-2 rounded-full" id="session-progress" style="width: 0%"></div>
+                        <!-- Fuel/progress gauge -->
+                    <div class="w-full bg-black bg-opacity-70 rounded-full h-3 mb-4 mt-4 border border-red-900 border-opacity-30 overflow-hidden">
+                        <div class="bg-gradient-to-r from-red-600 to-orange-500 h-3 rounded-full" id="session-progress" style="width: 0%"></div>
                     </div>
                     
-                    <div class="grid grid-cols-3 gap-2 w-full">
-                        <button class="p-2 rounded bg-slate-700 hover:bg-slate-600 transition" data-mode="work">
-                            <i class="fas fa-briefcase mr-1"></i> Work
+                    <!-- Mission briefing -->
+                    <div class="bg-black bg-opacity-50 p-4 rounded-lg w-full border border-red-900 border-opacity-30">
+                        <h4 class="text-sm font-bold mb-2 text-red-300 flex items-center">
+                            <i class="fas fa-satellite-dish mr-2 text-xs"></i> Mission Briefing
+                        </h4>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            Mars Shuttle missions operate in 25-minute flight phases followed by rest periods. Complete 4 flight phases to reach Mars orbit. Maintain focus during each phase for optimal mission success. <span class="text-red-400">Prepare for launch, astronaut.</span>
+                        </p>
+                        
+                        <!-- Mission log display -->
+                        <div class="mt-3 h-12 overflow-hidden bg-black bg-opacity-70 rounded p-2 border border-red-900 border-opacity-20">
+                            <div id="mission-log" class="text-xs font-mono text-green-500">System ready. Awaiting launch command...</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Flight mode selection -->
+                    <div class="grid grid-cols-3 gap-2 w-full mt-4">
+                        <button class="p-2 rounded bg-red-900 bg-opacity-50 hover:bg-red-800 transition text-red-100" data-mode="work">
+                            <i class="fas fa-rocket mr-1"></i> Flight
                         </button>
                         <button class="p-2 rounded bg-slate-700 hover:bg-slate-600 transition" data-mode="break">
-                            <i class="fas fa-coffee mr-1"></i> Break
+                            <i class="fas fa-moon mr-1"></i> Orbit
                         </button>
                         <button class="p-2 rounded bg-slate-700 hover:bg-slate-600 transition" data-mode="long-break">
-                            <i class="fas fa-couch mr-1"></i> Long Break
+                            <i class="fas fa-space-station-moon-alt mr-1"></i> Dock
                         </button>
                     </div>
                 </div>
             </div>
         </div>
         
-        <!-- 4 Major City Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" id="major-cities">
-            <!-- New York -->
-            <div class="city-card bg-slate-800 bg-opacity-70 rounded-xl p-6 tech-border relative overflow-hidden">
-                <div class="absolute -right-10 -top-10 w-32 h-32 bg-blue-500 rounded-full opacity-20"></div>
-                <div class="flex justify-between items-start mb-4">
-                    <div>
-                        <h2 class="text-2xl font-bold flex items-center">
-                            <i class="fas fa-building mr-2 text-blue-400"></i> New York
-                        </h2>
-                        <p class="text-slate-400">United States</p>
-                    </div>
-                    <div class="bg-blue-900 bg-opacity-50 px-3 py-1 rounded-full text-sm flex items-center">
-                        <i class="fas fa-flag-usa mr-1 text-blue-300"></i> EST
-                    </div>
-                </div>
-                <div class="flex justify-between items-center mb-6">
-                    <div class="text-5xl font-bold font-['Orbitron'] tracking-tighter" id="ny-time">00:00:00</div>
-                    <div class="text-sm text-slate-400" id="ny-date">Jan 1, 2023</div>
-                </div>
-                <div class="flex justify-between items-center">
-                    <div class="flex items-center">
-                        <i class="fas fa-temperature-low mr-2 text-blue-300"></i>
-                        <span>24°C</span>
-                    </div>
-                    <div class="flex items-center">
-                        <i class="fas fa-cloud mr-2 text-blue-300"></i>
-                        <span>Partly Cloudy</span>
-                    </div>
-                </div>
-                <div class="mt-4 pt-4 border-t border-slate-700 flex justify-between">
-                    <div class="text-xs text-slate-400">
-                        <i class="fas fa-subway mr-1"></i> Subway running
-                    </div>
-                    <div class="text-xs text-slate-400">
-                        <i class="fas fa-coffee mr-1"></i> Coffee shops open
-                    </div>
-                </div>
-            </div>
+        <!-- Deep Space Network Communication Simulator -->
+        <div class="relative mb-8">
+            <h3 class="text-xl font-bold mb-6 flex items-center">
+                <i class="fas fa-satellite-dish mr-2 text-red-400"></i> Deep Space Network Status
+            </h3>
             
-            <!-- London -->
-            <div class="city-card bg-slate-800 bg-opacity-70 rounded-xl p-6 tech-border relative overflow-hidden">
-                <div class="absolute -right-10 -top-10 w-32 h-32 bg-red-500 rounded-full opacity-20"></div>
-                <div class="flex justify-between items-start mb-4">
-                    <div>
-                        <h2 class="text-2xl font-bold flex items-center">
-                            <i class="fas fa-landmark mr-2 text-red-400"></i> London
-                        </h2>
-                        <p class="text-slate-400">United Kingdom</p>
+            <!-- Network visualization container -->
+            <div class="bg-black bg-opacity-50 rounded-xl p-6 relative overflow-hidden border border-red-900 border-opacity-30 shadow-lg">
+                <!-- Decorative elements -->
+                <div class="absolute -right-20 -top-20 w-40 h-40 bg-blue-600 rounded-full opacity-10 blur-lg"></div>
+                <div class="absolute -left-10 -bottom-10 w-32 h-32 bg-red-600 rounded-full opacity-10 blur-lg"></div>
+                
+                <!-- Network visualization -->
+                <div class="h-96 relative" id="network-visualization">
+                    <!-- Earth Node -->
+                    <div class="absolute bottom-10 left-10 network-node earth-node">
+                        <div class="relative">
+                            <div class="w-16 h-16 rounded-full bg-blue-500 flex items-center justify-center shadow-glow-blue pulse-slow planet-glow-blue">
+                                <i class="fas fa-globe-americas text-2xl text-white"></i>
+                            </div>
+                            <div class="signal-waves earth-waves"></div>
+                            <div class="absolute -bottom-8 left-0 right-0 text-center">
+                                <span class="text-xs font-bold text-blue-300">EARTH CONTROL</span>
+                            </div>
+                            <div class="absolute top-0 right-0 w-3 h-3 rounded-full bg-green-400 animate-ping"></div>
+                            <!-- Earth's moon orbit -->
+                            <div class="absolute inset-0 w-full h-full rotate-slow orbit">
+                                <div class="absolute -right-4 top-0 w-4 h-4 rounded-full bg-gray-300 opacity-70"></div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="bg-red-900 bg-opacity-50 px-3 py-1 rounded-full text-sm flex items-center">
-                        <i class="fas fa-flag-uk mr-1 text-red-300"></i> GMT
+                    
+                    <!-- Satellite Node -->
+                    <div class="absolute top-1/4 left-1/3 network-node satellite-node">
+                        <div class="relative">
+                            <div class="w-12 h-12 rounded-full bg-cyan-600 flex items-center justify-center shadow-glow-cyan pulse-medium planet-glow-cyan">
+                                <i class="fas fa-satellite text-xl text-white"></i>
+                            </div>
+                            <div class="signal-waves satellite-waves"></div>
+                            <div class="absolute -bottom-8 left-0 right-0 text-center">
+                                <span class="text-xs font-bold text-cyan-300">RELAY SATELLITE</span>
+                            </div>
+                            <div class="absolute top-0 right-0 w-2 h-2 rounded-full bg-green-400 animate-ping"></div>
+                            <!-- Solar panels -->
+                            <div class="absolute inset-0 w-full h-full rotate-medium">
+                                <div class="absolute left-12 top-4 w-8 h-1 bg-blue-200 opacity-80"></div>
+                                <div class="absolute right-12 top-4 w-8 h-1 bg-blue-200 opacity-80"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Mars Node -->
+                    <div class="absolute top-20 right-1/4 network-node mars-node">
+                        <div class="relative">
+                            <div class="w-14 h-14 rounded-full bg-red-600 flex items-center justify-center shadow-glow-red pulse-slow planet-glow-red">
+                                <i class="fas fa-globe text-2xl text-white"></i>
+                            </div>
+                            <div class="signal-waves mars-waves"></div>
+                            <div class="absolute -bottom-8 left-0 right-0 text-center">
+                                <span class="text-xs font-bold text-red-300">MARS COMMAND</span>
+                            </div>
+                            <div class="absolute top-0 right-0 w-2 h-2 rounded-full bg-green-400 animate-ping"></div>
+                            <!-- Mars' moons orbit -->
+                            <div class="absolute inset-0 w-full h-full rotate-fast orbit">
+                                <div class="absolute -right-3 top-2 w-2 h-2 rounded-full bg-gray-400 opacity-70"></div>
+                            </div>
+                            <div class="absolute inset-0 w-full h-full rotate-medium orbit" style="transform: rotate(120deg)">
+                                <div class="absolute -left-4 top-3 w-3 h-3 rounded-full bg-gray-500 opacity-70"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Spacecraft Node -->
+                    <div class="absolute bottom-1/3 right-20 network-node spacecraft-node">
+                        <div class="relative">
+                            <div class="w-10 h-10 rounded-full bg-orange-500 flex items-center justify-center shadow-glow-orange pulse-fast planet-glow-orange">
+                                <i class="fas fa-rocket text-lg text-white"></i>
+                            </div>
+                            <div class="signal-waves spacecraft-waves"></div>
+                            <div class="absolute -bottom-8 left-0 right-0 text-center">
+                                <span class="text-xs font-bold text-orange-300">MARS SHUTTLE</span>
+                            </div>
+                            <div class="absolute top-0 right-0 w-2 h-2 rounded-full bg-green-400 animate-ping"></div>
+                            <!-- Thruster effect -->
+                            <div class="absolute -bottom-3 left-1/2 transform -translate-x-1/2 w-4 h-4">
+                                <div class="w-full h-full bg-gradient-to-t from-orange-500 via-yellow-500 to-transparent rounded-full animate-pulse"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- New Phobos Base Node -->
+                    <div class="absolute top-1/3 right-1/6 network-node phobos-node">
+                        <div class="relative">
+                            <div class="w-8 h-8 rounded-full bg-purple-600 flex items-center justify-center shadow-glow-purple pulse-medium planet-glow-purple">
+                                <i class="fas fa-broadcast-tower text-sm text-white"></i>
+                            </div>
+                            <div class="signal-waves" style="animation: signal-wave 3.5s linear infinite; box-shadow: 0 0 0 rgba(168, 85, 247, 0.4);"></div>
+                            <div class="absolute -bottom-8 left-0 right-0 text-center">
+                                <span class="text-xs font-bold text-purple-300">PHOBOS BASE</span>
+                            </div>
+                            <div class="absolute top-0 right-0 w-2 h-2 rounded-full bg-yellow-400 animate-ping"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- New Science Rover Node -->
+                    <div class="absolute bottom-1/4 left-1/4 network-node rover-node">
+                        <div class="relative">
+                            <div class="w-8 h-8 rounded-full bg-green-600 flex items-center justify-center shadow-glow-green pulse-fast">
+                                <i class="fas fa-robot text-sm text-white"></i>
+                            </div>
+                            <div class="signal-waves" style="animation: signal-wave 2s linear infinite; box-shadow: 0 0 0 rgba(22, 163, 74, 0.4);"></div>
+                            <div class="absolute -bottom-8 left-0 right-0 text-center">
+                                <span class="text-xs font-bold text-green-300">SCIENCE ROVER</span>
+                            </div>
+                            <div class="absolute top-0 right-0 w-2 h-2 rounded-full bg-green-400 animate-ping"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Space background - stars and objects removed -->
+                            <!-- Small probe moving along a curved path -->
+                            <path id="probe-path-1" d="M 5% 40% Q 25% 20%, 45% 30% T 85% 15%" stroke="none" fill="none"></path>
+                            <circle r="2" fill="#f97316" filter="url(#glow-orange)">
+                                <animateMotion dur="30s" repeatCount="indefinite" path="M 5% 40% Q 25% 20%, 45% 30% T 85% 15%"></animateMotion>
+                            </circle>
+                            
+                            <!-- Another small probe with a different path -->
+                            <path id="probe-path-2" d="M 95% 60% Q 75% 80%, 55% 70% T 15% 85%" stroke="none" fill="none"></path>
+                            <circle r="2" fill="#3b82f6" filter="url(#glow-blue)">
+                                <animateMotion dur="40s" repeatCount="indefinite" path="M 95% 60% Q 75% 80%, 55% 70% T 15% 85%"></animateMotion>
+                            </circle>
+                            
+                            <!-- Supply ship moving between Earth and Mars -->
+                            <path id="supply-ship-path" d="M 20% 75% Q 47.5% 40%, 75% 25%" stroke="none" fill="none"></path>
+                            <polygon points="0,-3 2,3 -2,3" fill="#a3e635" filter="url(#glow-green)">
+                                <animateMotion dur="25s" repeatCount="indefinite" path="M 20% 75% Q 47.5% 40%, 75% 25%">
+                                    <mpath href="#supply-ship-path"></mpath>
+                                </animateMotion>
+                                <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="5s" repeatCount="indefinite"></animateTransform>
+                            </polygon>
+                            
+                            <!-- New science probe with a different path -->
+                            <path id="science-probe-path" d="M 75% 25% Q 60% 50%, 25% 35%" stroke="none" fill="none"></path>
+                            <polygon points="-2,-2 2,-2 0,2" fill="#a855f7" filter="url(#glow-purple)">
+                                <animateMotion dur="35s" repeatCount="indefinite" path="M 75% 25% Q 60% 50%, 25% 35%">
+                                    <mpath href="#science-probe-path"></mpath>
+                                </animateMotion>
+                                <animateTransform attributeName="transform" type="rotate" from="0" to="-360" dur="7s" repeatCount="indefinite"></animateTransform>
+                            </polygon>
+                            
+                            <!-- Asteroid moving slowly across the screen -->
+                            <path id="asteroid-path-1" d="M -5% 50% L 105% 60%" stroke="none" fill="none"></path>
+                            <circle r="3" fill="#78716c">
+                                <animateMotion dur="60s" repeatCount="indefinite" path="M -5% 50% L 105% 60%"></animateMotion>
+                            </circle>
+                            
+                            <!-- Additional asteroids -->
+                            <path id="asteroid-path-2" d="M -5% 30% L 105% 25%" stroke="none" fill="none"></path>
+                            <circle r="2" fill="#78716c">
+                                <animateMotion dur="45s" repeatCount="indefinite" path="M -5% 30% L 105% 25%"></animateMotion>
+                            </circle>
+                            
+                            <path id="asteroid-path-3" d="M 105% 80% L -5% 70%" stroke="none" fill="none"></path>
+                            <circle r="2.5" fill="#78716c">
+                                <animateMotion dur="70s" repeatCount="indefinite" path="M 105% 80% L -5% 70%"></animateMotion>
+                            </circle>
+                        </g>
+                        
+                        <!-- Glow filters for space objects -->
+                        <defs>
+                            <filter id="glow-blue" x="-50%" y="-50%" width="200%" height="200%">
+                                <feGaussianBlur stdDeviation="1" result="blur"/>
+                                <feFlood flood-color="#3b82f6" flood-opacity="0.5" result="color"/>
+                                <feComposite in="color" in2="blur" operator="in" result="glow"/>
+                                <feComposite in="SourceGraphic" in2="glow" operator="over"/>
+                            </filter>
+                            <filter id="glow-orange" x="-50%" y="-50%" width="200%" height="200%">
+                                <feGaussianBlur stdDeviation="1" result="blur"/>
+                                <feFlood flood-color="#f97316" flood-opacity="0.5" result="color"/>
+                                <feComposite in="color" in2="blur" operator="in" result="glow"/>
+                                <feComposite in="SourceGraphic" in2="glow" operator="over"/>
+                            </filter>
+                            <filter id="glow-green" x="-50%" y="-50%" width="200%" height="200%">
+                                <feGaussianBlur stdDeviation="1" result="blur"/>
+                                <feFlood flood-color="#a3e635" flood-opacity="0.5" result="color"/>
+                                <feComposite in="color" in2="blur" operator="in" result="glow"/>
+                                <feComposite in="SourceGraphic" in2="glow" operator="over"/>
+                            </filter>
+                            <filter id="glow-purple" x="-50%" y="-50%" width="200%" height="200%">
+                                <feGaussianBlur stdDeviation="1" result="blur"/>
+                                <feFlood flood-color="#a855f7" flood-opacity="0.5" result="color"/>
+                                <feComposite in="color" in2="blur" operator="in" result="glow"/>
+                                <feComposite in="SourceGraphic" in2="glow" operator="over"/>
+                            </filter>
+                        </defs>
+                        
+                        <!-- Communication lines with enhanced curves -->
+                        <!-- Earth to Satellite -->
+                        <path id="earth-satellite-line" d="M 15% 80% C 20% 60%, 25% 40%, 33% 25%" class="comm-line earth-satellite-line" fill="none"></path>
+                        
+                        <!-- Satellite to Mars -->
+                        <path id="satellite-mars-line" d="M 33% 25% C 45% 18%, 60% 15%, 75% 20%" class="comm-line satellite-mars-line" fill="none"></path>
+                        
+                        <!-- Mars to Spacecraft -->
+                        <path id="mars-spacecraft-line" d="M 75% 20% C 78% 35%, 82% 50%, 85% 66%" class="comm-line mars-spacecraft-line" fill="none"></path>
+                        
+                        <!-- Earth to Spacecraft (occasional direct) -->
+                        <path id="earth-spacecraft-line" d="M 15% 80% C 35% 90%, 65% 85%, 85% 66%" class="comm-line earth-spacecraft-line" fill="none"></path>
+                        
+                        <!-- New communication lines for added nodes -->
+                        <!-- Mars to Phobos Base -->
+                        <path id="mars-phobos-line" d="M 75% 20% C 70% 25%, 65% 30%, 60% 33%" class="comm-line" fill="none" 
+                              style="stroke: rgba(168, 85, 247, 0.4); stroke-width: 1; stroke-dasharray: 3, 3; 
+                                     animation: dash-animation 25s linear infinite, mars-phobos-pulse 3s ease-in-out infinite;"></path>
+                        
+                        <!-- Earth to Rover -->
+                        <path id="earth-rover-line" d="M 15% 80% C 18% 65%, 22% 50%, 25% 75%" class="comm-line" fill="none"
+                              style="stroke: rgba(22, 163, 74, 0.4); stroke-width: 1; stroke-dasharray: 4, 4; 
+                                     animation: dash-animation 35s linear infinite reverse, earth-rover-pulse 4s ease-in-out infinite;"></path>
+                        
+                        <!-- Phobos to Spacecraft -->
+                        <path id="phobos-spacecraft-line" d="M 60% 33% C 68% 45%, 76% 55%, 85% 66%" class="comm-line" fill="none"
+                              style="stroke: rgba(168, 85, 247, 0.3); stroke-width: 0.75; stroke-dasharray: 2, 6; 
+                                     animation: dash-animation 20s linear infinite reverse, phobos-spacecraft-pulse 3.5s ease-in-out infinite;"></path>
+                        
+                        <!-- Rover to Mars -->
+                        <path id="rover-mars-line" d="M 25% 75% C 40% 60%, 55% 40%, 75% 20%" class="comm-line" fill="none"
+                              style="stroke: rgba(22, 163, 74, 0.3); stroke-width: 0.75; stroke-dasharray: 2, 4; 
+                                     animation: dash-animation 30s linear infinite, rover-mars-pulse 3s ease-in-out infinite;"></path>
+                    </svg>
+                    
+                    <!-- Data packets -->
+                    <div id="data-packet-1" class="data-packet earth-to-satellite"></div>
+                    <div id="data-packet-2" class="data-packet satellite-to-mars"></div>
+                    <div id="data-packet-3" class="data-packet mars-to-spacecraft"></div>
+                    <div id="data-packet-4" class="data-packet spacecraft-to-earth"></div>
+                    <!-- New data packets for added nodes -->
+                    <div id="data-packet-5" class="data-packet mars-to-phobos"></div>
+                    <div id="data-packet-6" class="data-packet earth-to-rover"></div>
+                    
+                    <!-- Space dust particles -->
+                    <div class="space-dust dust-slow" style="top: 20%; left: 30%;"></div>
+                    <div class="space-dust dust-medium" style="top: 40%; left: 60%;"></div>
+                    <div class="space-dust dust-fast" style="top: 70%; left: 25%;"></div>
+                    <div class="space-dust dust-medium" style="top: 35%; left: 75%;"></div>
+                    <div class="space-dust dust-slow" style="top: 55%; left: 45%;"></div>
+                    <div class="space-dust dust-fast" style="top: 15%; left: 65%;"></div>
+                    <div class="space-dust dust-medium" style="top: 80%; left: 40%;"></div>
+                    
+                    <!-- Asteroids -->
+                    <div class="asteroid asteroid-path" style="top: 25%; left: -5%;"></div>
+                    <div class="asteroid asteroid-path" style="top: 60%; left: 105%; animation-delay: 5s;"></div>
+                    <div class="asteroid asteroid-path" style="top: 45%; left: -5%; animation-delay: 10s;"></div>
+                </div>
+                
+                <!-- Communication logs - Rust-style terminal -->
+                <div class="mt-4 bg-black bg-opacity-90 rounded-lg p-3 border border-slate-700 h-40 overflow-hidden">
+                    <div class="flex justify-between items-center mb-2">
+                        <h4 class="text-sm font-bold text-slate-300 flex items-center">
+                            <i class="fas fa-terminal mr-2 text-xs"></i> DSN COMM CHANNEL
+                        </h4>
+                        <div class="flex space-x-2">
+                            <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+                            <div class="text-xs text-green-400 font-mono">LIVE</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Terminal header with Rust-style formatting -->
+                    <div class="text-xs font-mono text-slate-400 border-b border-slate-700 pb-1 mb-1 flex justify-between">
+                        <span>SOURCE</span>
+                        <span>MESSAGE</span>
+                        <span>STATUS</span>
+                    </div>
+                    
+                    <!-- Scrollable terminal content -->
+                    <div id="comm-log" class="font-mono text-xs space-y-1 h-24 overflow-y-auto pr-1 terminal-content">
+                        <!-- Messages will be dynamically inserted here by JavaScript -->
                     </div>
                 </div>
-                <div class="flex justify-between items-center mb-6">
-                    <div class="text-5xl font-bold font-['Orbitron'] tracking-tighter" id="london-time">00:00:00</div>
-                    <div class="text-sm text-slate-400" id="london-date">Jan 1, 2023</div>
-                </div>
-                <div class="flex justify-between items-center">
-                    <div class="flex items-center">
-                        <i class="fas fa-temperature-low mr-2 text-red-300"></i>
-                        <span>18°C</span>
+                
+                <!-- Rust-style typing cursor animation -->
+                <style>
+                    @keyframes cursor-blink {
+                        0%, 100% { opacity: 0; }
+                        50% { opacity: 1; }
+                    }
+                    
+                    .typing-cursor {
+                        display: inline-block;
+                        width: 0.5em;
+                        height: 1em;
+                        background-color: #10b981;
+                        animation: cursor-blink 1s step-end infinite;
+                        vertical-align: text-bottom;
+                        margin-left: 2px;
+                    }
+                    
+                    .terminal-content::-webkit-scrollbar {
+                        width: 6px;
+                    }
+                    
+                    .terminal-content::-webkit-scrollbar-track {
+                        background: rgba(30, 41, 59, 0.5);
+                        border-radius: 3px;
+                    }
+                    
+                    .terminal-content::-webkit-scrollbar-thumb {
+                        background: rgba(148, 163, 184, 0.5);
+                        border-radius: 3px;
+                    }
+                    
+                    .terminal-content::-webkit-scrollbar-thumb:hover {
+                        background: rgba(148, 163, 184, 0.8);
+                    }
+                    
+                    .message-enter {
+                        opacity: 0;
+                        transform: translateY(10px);
+                    }
+                    
+                    .message-enter-active {
+                        opacity: 1;
+                        transform: translateY(0);
+                        transition: opacity 300ms, transform 300ms;
+                    }
+                    
+                    .typing-animation {
+                        white-space: normal;
+                        position: relative;
+                    }
+                    
+                    .typing-cursor {
+                        display: inline-block;
+                        width: 2px;
+                        height: 1em;
+                        background-color: #10b981;
+                        animation: blink-caret 0.75s step-end infinite;
+                        vertical-align: text-bottom;
+                        margin-left: 2px;
+                    }
+                    
+                    @keyframes blink-caret {
+                        from, to { opacity: 0; }
+                        50% { opacity: 1; }
+                    }
+                </style>
+                
+                <!-- Network stats -->
+                <div class="grid grid-cols-4 gap-4 mt-4">
+                    <div class="bg-blue-900 bg-opacity-30 rounded-lg p-3 border border-blue-900 border-opacity-30">
+                        <div class="text-xs text-blue-300 uppercase tracking-wider mb-1">Earth Signal</div>
+                        <div class="text-xl font-bold font-['Orbitron'] text-blue-400">100%</div>
+                        <div class="text-xs text-slate-400 mt-1">Latency: 0ms</div>
                     </div>
-                    <div class="flex items-center">
-                        <i class="fas fa-cloud-rain mr-2 text-red-300"></i>
-                        <span>Light Rain</span>
+                    
+                    <div class="bg-cyan-900 bg-opacity-30 rounded-lg p-3 border border-cyan-900 border-opacity-30">
+                        <div class="text-xs text-cyan-300 uppercase tracking-wider mb-1">Relay Status</div>
+                        <div class="text-xl font-bold font-['Orbitron'] text-cyan-400">Online</div>
+                        <div class="text-xs text-slate-400 mt-1">Orbit: Stable</div>
                     </div>
-                </div>
-                <div class="mt-4 pt-4 border-t border-slate-700 flex justify-between">
-                    <div class="text-xs text-slate-400">
-                        <i class="fas fa-bus mr-1"></i> Buses running
+                    
+                    <div class="bg-red-900 bg-opacity-30 rounded-lg p-3 border border-red-900 border-opacity-30">
+                        <div class="text-xs text-red-300 uppercase tracking-wider mb-1">Mars Signal</div>
+                        <div class="text-xl font-bold font-['Orbitron'] text-red-400">87%</div>
+                        <div class="text-xs text-slate-400 mt-1">Delay: 22min</div>
                     </div>
-                    <div class="text-xs text-slate-400">
-                        <i class="fas fa-umbrella mr-1"></i> Rain expected
+                    
+                    <div class="bg-orange-900 bg-opacity-30 rounded-lg p-3 border border-orange-900 border-opacity-30">
+                        <div class="text-xs text-orange-300 uppercase tracking-wider mb-1">Shuttle Comms</div>
+                        <div class="text-xl font-bold font-['Orbitron'] text-orange-400">76%</div>
+                        <div class="text-xs text-slate-400 mt-1">Data: 1.2TB/day</div>
                     </div>
                 </div>
             </div>
-            
-            <!-- Tokyo -->
-            <div class="city-card bg-slate-800 bg-opacity-70 rounded-xl p-6 tech-border relative overflow-hidden">
-                <div class="absolute -right-10 -top-10 w-32 h-32 bg-pink-500 rounded-full opacity-20"></div>
-                <div class="flex justify-between items-start mb-4">
-                    <div>
-                        <h2 class="text-2xl font-bold flex items-center">
-                            <i class="fas fa-torii-gate mr-2 text-pink-400"></i> Tokyo
-                        </h2>
-                        <p class="text-slate-400">Japan</p>
-                    </div>
-                    <div class="bg-pink-900 bg-opacity-50 px-3 py-1 rounded-full text-sm flex items-center">
-                        <i class="fas fa-flag mr-1 text-pink-300"></i> JST
-                    </div>
-                </div>
-                <div class="flex justify-between items-center mb-6">
-                    <div class="text-5xl font-bold font-['Orbitron'] tracking-tighter" id="tokyo-time">00:00:00</div>
-                    <div class="text-sm text-slate-400" id="tokyo-date">Jan 1, 2023</div>
-                </div>
-                <div class="flex justify-between items-center">
-                    <div class="flex items-center">
-                        <i class="fas fa-temperature-low mr-2 text-pink-300"></i>
-                        <span>22°C</span>
-                    </div>
-                    <div class="flex items-center">
-                        <i class="fas fa-sun mr-2 text-pink-300"></i>
-                        <span>Sunny</span>
-                    </div>
-                </div>
-                <div class="mt-4 pt-4 border-t border-slate-700 flex justify-between">
-                    <div class="text-xs text-slate-400">
-                        <i class="fas fa-train mr-1"></i> Trains running
-                    </div>
-                    <div class="text-xs text-slate-400">
-                        <i class="fas fa-shopping-bag mr-1"></i> Stores open
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Sydney -->
-            <div class="city-card bg-slate-800 bg-opacity-70 rounded-xl p-6 tech-border relative overflow-hidden">
-                <div class="absolute -right-10 -top-10 w-32 h-32 bg-yellow-500 rounded-full opacity-20"></div>
-                <div class="flex justify-between items-start mb-4">
-                    <div>
-                        <h2 class="text-2xl font-bold flex items-center">
-                            <i class="fas fa-koala mr-2 text-yellow-400"></i> Sydney
-                        </h2>
-                        <p class="text-slate-400">Australia</p>
-                    </div>
-                    <div class="bg-yellow-900 bg-opacity-50 px-3 py-1 rounded-full text-sm flex items-center">
-                        <i class="fas fa-flag mr-1 text-yellow-300"></i> AEST
-                    </div>
-                </div>
-                <div class="flex justify-between items-center mb-6">
-                    <div class="text-5xl font-bold font-['Orbitron'] tracking-tighter" id="sydney-time">00:00:00</div>
-                    <div class="text-sm text-slate-400" id="sydney-date">Jan 1, 2023</div>
-                </div>
-                <div class="flex justify-between items-center">
-                    <div class="flex items-center">
-                        <i class="fas fa-temperature-low mr-2 text-yellow-300"></i>
-                        <span>20°C</span>
-                    </div>
-                    <div class="flex items-center">
-                        <i class="fas fa-cloud-sun mr-2 text-yellow-300"></i>
-                        <span>Partly Sunny</span>
-                    </div>
-                </div>
-                <div class="mt-4 pt-4 border-t border-slate-700 flex justify-between">
-                    <div class="text-xs text-slate-400">
-                        <i class="fas fa-ferry mr-1"></i> Ferries running
-                    </div>
-                    <div class="text-xs text-slate-400">
-                        <i class="fas fa-utensils mr-1"></i> Restaurants open
-                    </div>
-                </div>
-            </div>
+        </div>
         </div>
     </main>
     
@@ -493,10 +1202,295 @@
             </div>
         </div>
         <div class="mt-8 text-center text-sm text-slate-500">
-            © 2023 Timefe. All times are calculated based on your current location and browser settings.
+            &copy; 2023 Timefe. All times are calculated based on your current location and browser settings.
         </div>
     </footer>
-
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const now = new Date();
+        // Day of the month
+        document.getElementById('day-of-month').textContent = now.getDate();
+        // Day of the year
+        const start = new Date(now.getFullYear(), 0, 0);
+        const diff = now - start;
+        const oneDay = 1000 * 60 * 60 * 24;
+        const dayOfYear = Math.floor(diff / oneDay);
+        document.getElementById('day-of-year').textContent = dayOfYear;
+        
+        // Update This Day in History date display
+        updateHistoryDateDisplay(now);
+        
+        // Fetch historical events for today
+        fetchHistoricalEvents();
+    });
+    
+    // Function to update the history card date display
+    function updateHistoryDateDisplay(date) {
+        try {
+            const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+            const monthName = months[date.getMonth()];
+            const day = date.getDate();
+            const year = date.getFullYear();
+            const isLeapYear = (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
+            const daysInYear = isLeapYear ? 366 : 365;
+            
+            // Update month and day
+            const monthDayElement = document.getElementById('current-month-day');
+            if (monthDayElement) {
+                monthDayElement.textContent = `${monthName} ${day}`;
+            }
+            
+            // Update day of year display
+            const dayOfYear = Math.floor((date - new Date(date.getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24));
+            
+            const dayOfYearBadge = document.getElementById('day-of-year-badge');
+            if (dayOfYearBadge) {
+                dayOfYearBadge.textContent = dayOfYear;
+            }
+            
+            const dayOfYearDisplay = document.getElementById('day-of-year-display');
+            if (dayOfYearDisplay) {
+                dayOfYearDisplay.textContent = `Day ${dayOfYear} of ${daysInYear}`;
+            }
+            
+            // Update day of month and day of year in Current Location card
+            const dayOfMonthElement = document.getElementById('day-of-month');
+            if (dayOfMonthElement) {
+                dayOfMonthElement.textContent = day;
+            }
+            
+            const dayOfYearElement = document.getElementById('day-of-year');
+            if (dayOfYearElement) {
+                dayOfYearElement.textContent = dayOfYear;
+            }
+        } catch (error) {
+            console.error('Error updating history date display:', error);
+        }
+    }
+    
+    // Function to fetch historical events for today's date
+    function fetchHistoricalEvents() {
+        try {
+            const today = new Date();
+            const month = today.getMonth() + 1; // JavaScript months are 0-indexed
+            const day = today.getDate();
+            
+            // Using Wikipedia API to get events for today
+            // This is a more reliable and open API compared to some alternatives
+            const url = `https://en.wikipedia.org/api/rest_v1/feed/onthisday/events/${month}/${day}`;
+            
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data && data.events) {
+                        displayHistoricalEvents(data.events);
+                    } else {
+                        displayFallbackEvents();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching historical events:', error);
+                    displayFallbackEvents(); // Display fallback events if API fails
+                });
+        } catch (error) {
+            console.error('Error in fetchHistoricalEvents:', error);
+            displayFallbackEvents();
+        }
+    }
+    
+    // Function to display historical events
+    function displayHistoricalEvents(events) {
+        try {
+            const container = document.getElementById('historical-events');
+            if (!container) {
+                console.error('Historical events container not found');
+                return;
+            }
+            
+            // Clear any existing events first
+            container.innerHTML = '';
+            
+            // Remove loading indicator
+            const loadingIndicator = document.getElementById('history-loading');
+            if (loadingIndicator) {
+                loadingIndicator.style.display = 'none';
+            }
+            
+            // Get exactly 3 random events from different years for variety
+            const selectedEvents = getRandomEventsFromDifferentYears(events, 3);
+            
+            if (!selectedEvents || selectedEvents.length === 0) {
+                displayFallbackEvents();
+                return;
+            }
+            
+            // Limit to exactly 3 events
+            const eventsToShow = selectedEvents.slice(0, 3);
+            
+            // Create and append event elements
+            eventsToShow.forEach((event, index) => {
+                const eventElement = document.createElement('div');
+                eventElement.className = 'bg-slate-800 bg-opacity-60 p-2 rounded-lg border border-purple-900 border-opacity-30 relative pl-8';
+                
+                // Timeline dot
+                const timelineDot = document.createElement('div');
+                timelineDot.className = 'absolute left-3 top-5 w-2 h-2 rounded-full bg-purple-400';
+                eventElement.appendChild(timelineDot);
+                
+                // Year badge with enhanced styling
+                const yearBadge = document.createElement('span');
+                yearBadge.className = 'inline-block bg-purple-900 text-purple-200 text-xs px-2 py-1 rounded-full mb-1 font-bold';
+                yearBadge.textContent = event.year;
+                
+                // Description with better typography and shorter length
+                const description = document.createElement('p');
+                description.className = 'text-sm text-slate-300 leading-relaxed';
+                description.textContent = truncateText(event.text, 80); // 更短的文本限制，确保不需要滚动条
+                
+                eventElement.appendChild(yearBadge);
+                eventElement.appendChild(description);
+                container.appendChild(eventElement);
+            });
+        } catch (error) {
+            console.error('Error displaying historical events:', error);
+            try {
+                displayFallbackEvents();
+            } catch (fallbackError) {
+                console.error('Error displaying fallback events:', fallbackError);
+            }
+        }
+    }
+    
+    // Function to get random events from different years
+    function getRandomEventsFromDifferentYears(events, count) {
+        if (!events || events.length === 0) return [];
+        
+        // Sort events by year (newest first)
+        const sortedEvents = [...events].sort((a, b) => b.year - a.year);
+        
+        // Try to get events from different time periods
+        const result = [];
+        
+        // Get a recent event (last 100 years)
+        const recentEvents = sortedEvents.filter(e => e.year >= 1923);
+        if (recentEvents.length > 0) {
+            result.push(recentEvents[Math.floor(Math.random() * recentEvents.length)]);
+        }
+        
+        // Get a mid-period event (100-500 years ago)
+        const midEvents = sortedEvents.filter(e => e.year >= 1523 && e.year < 1923);
+        if (midEvents.length > 0) {
+            result.push(midEvents[Math.floor(Math.random() * midEvents.length)]);
+        }
+        
+        // Get an ancient event (more than 500 years ago)
+        const ancientEvents = sortedEvents.filter(e => e.year < 1523);
+        if (ancientEvents.length > 0) {
+            result.push(ancientEvents[Math.floor(Math.random() * ancientEvents.length)]);
+        }
+        
+        // If we don't have enough events, add random ones
+        while (result.length < count && sortedEvents.length > 0) {
+            const randomIndex = Math.floor(Math.random() * sortedEvents.length);
+            result.push(sortedEvents[randomIndex]);
+            sortedEvents.splice(randomIndex, 1); // Remove selected event
+        }
+        
+        return result;
+    }
+    
+    // Function to display fallback events if API fails
+    function displayFallbackEvents() {
+        try {
+            const container = document.getElementById('historical-events');
+            if (!container) {
+                console.error('Historical events container not found');
+                return;
+            }
+            
+            // Clear any existing events first
+            container.innerHTML = '';
+            
+            // Remove loading indicator
+            const loadingIndicator = document.getElementById('history-loading');
+            if (loadingIndicator) {
+                loadingIndicator.style.display = 'none';
+            }
+            
+            // Get today's date
+            const today = new Date();
+            const month = today.getMonth() + 1;
+            const day = today.getDate();
+            
+            // Hardcoded fallback events for different dates
+            const fallbackEvents = [
+                // April 21 events - optimized for April 21, 2025
+                { date: '4/21', year: 1836, text: 'The Battle of San Jacinto: Texas wins independence from Mexico.' },
+                { date: '4/21', year: 1918, text: 'The Red Baron, Manfred von Richthofen, is shot down and killed.' },
+                { date: '4/21', year: 1989, text: 'Nintendo releases the Game Boy handheld console in Japan.' },
+                // Other significant dates
+                { date: '1/1', year: 1863, text: 'Abraham Lincoln signs the Emancipation Proclamation.' },
+                { date: '7/20', year: 1969, text: 'Apollo 11 lands on the moon, Neil Armstrong becomes first person to walk on lunar surface.' },
+                { date: '11/9', year: 1989, text: 'Fall of the Berlin Wall, symbolizing the end of the Cold War.' }
+            ];
+            
+            // Filter events for today's date, or use general events if none exist
+            let todayEvents = fallbackEvents.filter(e => e.date === `${month}/${day}`);
+            if (todayEvents.length === 0) {
+                // If no events for today, use general historical events
+                todayEvents = fallbackEvents.slice(3, 6); // Take 3 general events
+            }
+            
+            // Limit to exactly 3 events
+            const eventsToShow = todayEvents.slice(0, 3);
+            
+            // Display the events with enhanced styling
+            eventsToShow.forEach((event, index) => {
+                const eventElement = document.createElement('div');
+                eventElement.className = 'bg-slate-800 bg-opacity-60 p-2 rounded-lg border border-purple-900 border-opacity-30 relative pl-8';
+                
+                // Timeline dot
+                const timelineDot = document.createElement('div');
+                timelineDot.className = 'absolute left-3 top-5 w-2 h-2 rounded-full bg-purple-400';
+                eventElement.appendChild(timelineDot);
+                
+                // Year badge with enhanced styling
+                const yearBadge = document.createElement('span');
+                yearBadge.className = 'inline-block bg-purple-900 text-purple-200 text-xs px-2 py-1 rounded-full mb-1 font-bold';
+                yearBadge.textContent = event.year;
+                
+                // Description with better typography and shorter length
+                const description = document.createElement('p');
+                description.className = 'text-sm text-slate-300 leading-relaxed';
+                description.textContent = truncateText(event.text, 80); // 更短的文本限制，确保不需要滚动条
+                
+                eventElement.appendChild(yearBadge);
+                eventElement.appendChild(description);
+                container.appendChild(eventElement);
+            });
+        } catch (error) {
+            console.error('Error displaying fallback events:', error);
+        }
+    }
+    
+    // Helper function to truncate text
+    function truncateText(text, maxLength) {
+        if (!text) return '';
+        if (text.length <= maxLength) return text;
+        
+        // 找到最后一个完整单词的位置
+        const truncated = text.substring(0, maxLength);
+        const lastSpaceIndex = truncated.lastIndexOf(' ');
+        
+        // 如果找到空格，则在空格处截断，否则在 maxLength 处截断
+        return (lastSpaceIndex > 0 ? truncated.substring(0, lastSpaceIndex) : truncated) + '...';
+    }
+    </script>
     <script>
         // User's location data
         let userLocation = {
@@ -506,12 +1500,12 @@
             isDaytime: true
         };
         
-        // Major cities data
-        const majorCities = [
-            { id: "ny", name: "New York", country: "United States", timezone: "America/New_York", icon: "building", color: "blue" },
-            { id: "london", name: "London", country: "United Kingdom", timezone: "Europe/London", icon: "landmark", color: "red" },
-            { id: "tokyo", name: "Tokyo", country: "Japan", timezone: "Asia/Tokyo", icon: "torii-gate", color: "pink" },
-            { id: "sydney", name: "Sydney", country: "Australia", timezone: "Australia/Sydney", icon: "koala", color: "yellow" }
+        // Mars colonies data - 使用地球时区来模拟火星上的不同时区
+        const marsColonies = [
+            { id: "olympus", name: "Olympus City", location: "Olympus Mons Base", timezone: "America/New_York", icon: "mountain", color: "red", solOffset: 0 },
+            { id: "valles", name: "Valles Research", location: "Marineris Canyon", timezone: "Europe/London", icon: "valley", color: "orange", solOffset: 1 },
+            { id: "elysium", name: "Elysium Dome", location: "Agricultural Center", timezone: "Asia/Tokyo", icon: "seedling", color: "amber", solOffset: 2 },
+            { id: "phobos", name: "Phobos Station", location: "Orbital Gateway", timezone: "Australia/Sydney", icon: "satellite", color: "purple", solOffset: -1 }
         ];
         
         // Pomodoro Timer State
@@ -527,53 +1521,133 @@
             timerInterval: null
         };
         
-        // Update all clocks
+        // 全局变量，用于存储定时器ID
+        let clockIntervalId = null;
+        
+        // 更新所有时钟的函数
         function updateClocks() {
-            const now = new Date();
-            
-            // Update user's local time
-            document.getElementById('local-time').textContent = formatTime(now) + ' (Local)';
-            document.getElementById('current-time').textContent = formatTime(now);
-            document.getElementById('current-date').textContent = formatDate(now);
-            
-            // UTC
-            const utcTime = new Date(now.getTime() + now.getTimezoneOffset() * 60000);
-            document.getElementById('utc-time').textContent = formatTime(utcTime) + ' UTC';
-            
-            // Update major city times
-            majorCities.forEach(city => {
-                const options = { timeZone: city.timezone };
-                const cityTime = new Date(now.toLocaleString('en-US', options));
+            try {
+                console.log('Updating clocks at:', new Date().toISOString());
                 
-                document.getElementById(`${city.id}-time`).textContent = formatTime(cityTime);
-                document.getElementById(`${city.id}-date`).textContent = formatDate(cityTime);
-            });
-            
-            // Update clock hands
-            updateClockHands(now);
-            
-            // Update day/night status and background
-            updateDayNightStatus(now);
-            
-            // Update moon phase
-            updateMoonPhase(now);
+                // 使用当前时间
+                const now = new Date();
+                
+                // 更新用户本地时间
+                if (document.getElementById('local-time')) {
+                    document.getElementById('local-time').textContent = formatTime(now) + ' (Local)';
+                }
+                
+                // 更新当前位置卡片中的时间 - 这是关键部分
+                const currentTimeElement = document.getElementById('current-time');
+                if (currentTimeElement) {
+                    // 直接设置时、分、秒，确保每秒更新
+                    const hours = now.getHours().toString().padStart(2, '0');
+                    const minutes = now.getMinutes().toString().padStart(2, '0');
+                    const seconds = now.getSeconds().toString().padStart(2, '0');
+                    currentTimeElement.textContent = `${hours}:${minutes}:${seconds}`;
+                    console.log('Updated current-time to:', `${hours}:${minutes}:${seconds}`);
+                }
+                
+                // 更新当前位置卡片中的日期
+                if (document.getElementById('current-date')) {
+                    document.getElementById('current-date').textContent = formatDate(now);
+                }
+                
+                // UTC时间
+                const utcTime = new Date(now.getTime() + now.getTimezoneOffset() * 60000);
+                if (document.getElementById('utc-time')) {
+                    document.getElementById('utc-time').textContent = formatTime(utcTime) + ' UTC';
+                }
+                
+                // 火星殖民地卡片不再需要动态更新时间
+                // 静态信息已在HTML中设置
+                
+                // 如果存在时钟表面，更新时钟指针
+                if (document.querySelector('.clock-face')) {
+                    updateClockHands(now);
+                }
+                
+                // 更新日夜状态和背景
+                updateDayNightStatus(now);
+                
+                // 如果存在月相元素，更新月相
+                if (document.getElementById('moon-phase')) {
+                    updateMoonPhase(now);
+                }
+                
+                // 更新日期相关显示
+                updateDateDisplays(now);
+            } catch (error) {
+                console.error('Error in updateClocks:', error);
+            }
+        }
+        
+        // 更新日期显示的辅助函数
+        function updateDateDisplays(now) {
+            try {
+                // 更新天数显示
+                const dayOfMonth = now.getDate();
+                const dayOfMonthElement = document.getElementById('day-of-month');
+                if (dayOfMonthElement) {
+                    dayOfMonthElement.textContent = dayOfMonth;
+                }
+                
+                // 计算年内天数
+                const start = new Date(now.getFullYear(), 0, 0);
+                const diff = now - start;
+                const oneDay = 1000 * 60 * 60 * 24;
+                const dayOfYear = Math.floor(diff / oneDay);
+                
+                // 更新年内天数显示
+                const dayOfYearElement = document.getElementById('day-of-year');
+                if (dayOfYearElement) {
+                    dayOfYearElement.textContent = dayOfYear;
+                }
+            } catch (error) {
+                console.error('Error in updateDateDisplays:', error);
+            }
         }
         
         function formatTime(date) {
-            let hours = date.getHours();
-            let minutes = date.getMinutes();
-            let seconds = date.getSeconds();
-            
-            hours = hours < 10 ? '0' + hours : hours;
-            minutes = minutes < 10 ? '0' + minutes : minutes;
-            seconds = seconds < 10 ? '0' + seconds : seconds;
-            
-            return `${hours}:${minutes}:${seconds}`;
+            try {
+                let hours = date.getHours();
+                let minutes = date.getMinutes();
+                let seconds = date.getSeconds();
+                
+                hours = hours < 10 ? '0' + hours : hours;
+                minutes = minutes < 10 ? '0' + minutes : minutes;
+                seconds = seconds < 10 ? '0' + seconds : seconds;
+                
+                return `${hours}:${minutes}:${seconds}`;
+            } catch (error) {
+                console.error('Error in formatTime:', error);
+                return '00:00:00'; // 出错时返回默认时间
+            }
         }
         
         function formatDate(date) {
-            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-            return `${months[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
+            try {
+                const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                // 使用传入的日期参数，确保日期动态更新
+                // 同时保持当前日期为 2025-04-21
+                const currentDate = new Date(2025, 3, 21); // 月份是从0开始的，所以4月是3
+                
+                // 只使用固定日期的年、月、日，但使用传入日期的时、分、秒
+                const hours = date.getHours();
+                const minutes = date.getMinutes();
+                const seconds = date.getSeconds();
+                
+                // 创建一个新的日期对象，包含固定的年月日和动态的时分秒
+                const displayDate = new Date(currentDate);
+                displayDate.setHours(hours);
+                displayDate.setMinutes(minutes);
+                displayDate.setSeconds(seconds);
+                
+                return `${months[displayDate.getMonth()]} ${displayDate.getDate()}, ${displayDate.getFullYear()}`;
+            } catch (error) {
+                console.error('Error in formatDate:', error);
+                return 'Apr 21, 2025'; // 出错时返回固定日期
+            }
         }
         
         function updateClockHands(now) {
@@ -1024,12 +2098,36 @@
             // Get user location and update display
             getUserLocation();
             
-            // Start clock updates
+            // 清除可能存在的旧定时器
+            if (clockIntervalId) {
+                clearInterval(clockIntervalId);
+            }
+            
+            // 立即更新时钟
             updateClocks();
-            setInterval(updateClocks, 1000);
+            
+            // 设置新的定时器，每秒更新一次
+            clockIntervalId = setInterval(function() {
+                updateClocks();
+            }, 1000);
+            
+            // 添加调试信息
+            console.log('Clock interval started with ID:', clockIntervalId);
+            
+            // Initialize This Day in History
+            try {
+                const today = new Date();
+                updateHistoryDateDisplay(today);
+                fetchHistoricalEvents();
+            } catch (error) {
+                console.error('Error initializing This Day in History:', error);
+            }
             
             // Initialize Pomodoro Timer
             initPomodoroTimer();
+            
+            // Initialize Deep Space Network Communication
+            initDeepSpaceComm();
             
             // Add some interactive elements
             const cityCards = document.querySelectorAll('.city-card');
@@ -1040,6 +2138,173 @@
                 });
             });
         });
+        
+        // Deep Space Network Communication Simulator
+        function initDeepSpaceComm() {
+            const commLog = document.getElementById('comm-log');
+            
+            // Clear any existing messages
+            commLog.innerHTML = '';
+            
+            // Communication sources with their colors and possible messages
+            const sources = [
+                {
+                    name: 'EARTH',
+                    color: 'text-green-500',
+                    messages: [
+                        { text: 'Initiating connection to Deep Space Network...', status: '<span class="text-blue-400">ONLINE</span>' },
+                        { text: 'Weather update - solar activity increased by 12%', status: '<span class="text-yellow-400">INFO</span>' },
+                        { text: 'Transmitting mission parameters to Mars Command', status: '<span class="text-blue-400">SENT</span>' },
+                        { text: 'Orbital calculations updated for relay satellite', status: '<span class="text-green-400">OK</span>' },
+                        { text: 'New science objectives transmitted to rover team', status: '<span class="text-blue-400">SENT</span>' },
+                        { text: 'Deep space telemetry received from Voyager probe', status: '<span class="text-purple-400">DATA</span>' },
+                        { text: 'Scheduling communication window for Mars Colony', status: '<span class="text-yellow-400">PENDING</span>' }
+                    ]
+                },
+                {
+                    name: 'RELAY',
+                    color: 'text-cyan-400',
+                    messages: [
+                        { text: 'Signal strength at 94%, all channels operational', status: '<span class="text-green-400">OK</span>' },
+                        { text: 'Repositioning solar arrays for optimal power', status: '<span class="text-blue-400">ACTIVE</span>' },
+                        { text: 'Packet loss detected on secondary channel', status: '<span class="text-yellow-400">WARNING</span>' },
+                        { text: 'Relaying high-priority message to Mars Command', status: '<span class="text-blue-400">ROUTING</span>' },
+                        { text: 'Buffer capacity at 67% and stable', status: '<span class="text-green-400">NOMINAL</span>' },
+                        { text: 'Switching to backup transmission protocol', status: '<span class="text-purple-400">SWITCHING</span>' }
+                    ]
+                },
+                {
+                    name: 'MARS',
+                    color: 'text-red-400',
+                    messages: [
+                        { text: 'Receiving telemetry data from Earth Control', status: '<span class="text-blue-400">RECEIVING</span>' },
+                        { text: 'Dust storm detected in Acidalia Planitia', status: '<span class="text-yellow-400">ALERT</span>' },
+                        { text: 'Base power systems operating at 98% efficiency', status: '<span class="text-green-400">OPTIMAL</span>' },
+                        { text: 'Atmospheric readings show pressure drop of 2.3%', status: '<span class="text-purple-400">DATA</span>' },
+                        { text: 'Coordinating rover exploration of Olympus Mons', status: '<span class="text-blue-400">COORDINATING</span>' },
+                        { text: 'Water reclamation system maintenance complete', status: '<span class="text-green-400">COMPLETE</span>' }
+                    ]
+                },
+                {
+                    name: 'SHUTTLE',
+                    color: 'text-orange-400',
+                    messages: [
+                        { text: 'Position update sent. Trajectory nominal', status: '<span class="text-green-400">STABLE</span>' },
+                        { text: 'Initiating burn for orbital adjustment', status: '<span class="text-blue-400">BURNING</span>' },
+                        { text: 'Cargo secure, preparing for Mars approach', status: '<span class="text-yellow-400">PREPARING</span>' },
+                        { text: 'Radiation shield integrity at 100%', status: '<span class="text-green-400">PROTECTED</span>' },
+                        { text: 'Docking sequence with Phobos station initiated', status: '<span class="text-blue-400">DOCKING</span>' },
+                        { text: 'Life support systems operating within parameters', status: '<span class="text-green-400">NOMINAL</span>' }
+                    ]
+                },
+                {
+                    name: 'PHOBOS',
+                    color: 'text-purple-400',
+                    messages: [
+                        { text: 'Base systems operational. Receiving data from Mars', status: '<span class="text-green-400">ONLINE</span>' },
+                        { text: 'Gravity stabilizers calibrated for mining operations', status: '<span class="text-blue-400">CALIBRATED</span>' },
+                        { text: 'Fuel synthesis rate increased by 4.7%', status: '<span class="text-green-400">IMPROVED</span>' },
+                        { text: 'Tracking incoming supply shuttle', status: '<span class="text-yellow-400">TRACKING</span>' },
+                        { text: 'Ore processing module activated', status: '<span class="text-blue-400">ACTIVE</span>' },
+                        { text: 'Habitat rotation adjusted for optimal gravity', status: '<span class="text-green-400">ADJUSTED</span>' }
+                    ]
+                },
+                {
+                    name: 'ROVER',
+                    color: 'text-green-400',
+                    messages: [
+                        { text: 'Soil sample analysis complete', status: '<span class="text-blue-400">COMPLETE</span>' },
+                        { text: 'Moving to waypoint Alpha-7 for geological survey', status: '<span class="text-yellow-400">EN ROUTE</span>' },
+                        { text: 'Solar panels at 87% efficiency after dust cleaning', status: '<span class="text-green-400">CLEANED</span>' },
+                        { text: 'Subsurface radar scan revealing possible water ice', status: '<span class="text-purple-400">DISCOVERY</span>' },
+                        { text: 'Wheel traction optimal in current terrain', status: '<span class="text-green-400">OPTIMAL</span>' },
+                        { text: 'Sample containment unit sealed and secured', status: '<span class="text-blue-400">SECURED</span>' }
+                    ]
+                }
+            ];
+            
+            // Add initial messages
+            addCommMessage(sources[0], 0); // EARTH initial message
+            
+            // Set interval for adding new messages
+            let messageCounter = 1;
+            setInterval(() => {
+                // Randomly select a source
+                const sourceIndex = Math.floor(Math.random() * sources.length);
+                const source = sources[sourceIndex];
+                
+                // Randomly select a message from that source
+                const messageIndex = Math.floor(Math.random() * source.messages.length);
+                
+                // Add the message with typing animation
+                addCommMessage(source, messageIndex);
+                
+                // Keep only the last 8 messages to prevent overflow
+                const messages = commLog.children;
+                if (messages.length > 8) {
+                    commLog.removeChild(messages[0]);
+                }
+                
+                messageCounter++;
+            }, 3000); // Add a new message every 3 seconds
+            
+            // Function to add a message with Rust-style formatting and word-by-word typing animation
+            function addCommMessage(source, messageIndex) {
+                const message = source.messages[messageIndex];
+                const messageRow = document.createElement('div');
+                messageRow.className = `flex justify-between items-start message-enter ${source.color} py-1`;
+                
+                // Split message text into words for word-by-word typing effect
+                const words = message.text.split(' ');
+                
+                // Format the message in Rust terminal style
+                messageRow.innerHTML = `
+                    <div class="w-1/5 font-bold">[${source.name}]</div>
+                    <div class="w-3/5 typing-animation"></div>
+                    <div class="w-1/5 text-right">${message.status}</div>
+                `;
+                
+                // Add the message to the log
+                commLog.appendChild(messageRow);
+                
+                // Animate the message entrance
+                setTimeout(() => {
+                    messageRow.classList.add('message-enter-active');
+                    messageRow.classList.remove('message-enter');
+                    
+                    // Get the typing animation container
+                    const typingContainer = messageRow.querySelector('.typing-animation');
+                    
+                    // Add typing cursor
+                    const cursor = document.createElement('span');
+                    cursor.className = 'typing-cursor';
+                    typingContainer.appendChild(cursor);
+                    
+                    // Type each word with a delay
+                    let wordIndex = 0;
+                    const typeNextWord = () => {
+                        if (wordIndex < words.length) {
+                            // Create a span for the word
+                            const wordSpan = document.createElement('span');
+                            wordSpan.textContent = words[wordIndex] + ' ';
+                            
+                            // Insert the word before the cursor
+                            typingContainer.insertBefore(wordSpan, cursor);
+                            
+                            // Move to next word after delay
+                            wordIndex++;
+                            setTimeout(typeNextWord, 150); // Adjust speed here (milliseconds per word)
+                        }
+                    };
+                    
+                    // Start typing
+                    typeNextWord();
+                }, 10);
+                
+                // Scroll to the bottom of the log
+                commLog.scrollTop = commLog.scrollHeight;
+            }
+        }
     </script>
 </body>
 </html>
