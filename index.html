@@ -676,7 +676,36 @@
                 </div>
                 
                 <!-- Mars-themed info panel with improved layout -->
-                <div class="relative bg-slate-900 rounded-lg overflow-hidden p-5 border border-red-900 w-full shadow-inner">
+                <div class="grid grid-cols-2 gap-4 mb-4">
+                    <div class="bg-slate-900 bg-opacity-60 p-3 rounded-lg tech-border">
+                        <div class="text-xs text-slate-400 mb-1">Local Coordinates</div>
+                        <div class="text-lg font-['Orbitron'] text-orange-400" id="local-coordinates">31.2304° N, 121.4737° E</div>
+                        <div class="text-xs text-slate-500">Shanghai</div>
+                    </div>
+                    <div class="bg-slate-900 bg-opacity-60 p-3 rounded-lg tech-border">
+                        <div class="text-xs text-slate-400 mb-1">Browser Language</div>
+                        <div class="text-lg font-['Orbitron'] text-yellow-400" id="browser-language">zh-CN</div>
+                        <div class="text-xs text-slate-500">Chinese (Simplified)</div>
+                    </div>
+                </div>
+                
+                <div class="bg-slate-900 bg-opacity-60 p-3 rounded-lg tech-border mb-4">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <div class="text-xs text-slate-400 mb-1">Local Weather</div>
+                            <div class="text-lg font-bold text-red-300">22°C</div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-xs text-slate-400 mb-1">Connection</div>
+                            <div class="text-sm font-bold text-green-400" id="connection-status">Online</div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-xs text-slate-400 mb-1">Device</div>
+                            <div class="text-sm font-bold text-amber-400" id="device-type">Desktop</div>
+                        </div>
+                    </div>
+                </div>
+                      <div class="relative bg-slate-900 rounded-lg overflow-hidden p-5 border border-red-900 w-full shadow-inner">
                     <!-- Decorative tech elements -->
                     <div class="absolute top-0 right-0 w-full h-1 bg-gradient-to-r from-transparent via-red-500 to-transparent opacity-50"></div>
                     <div class="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-red-500 via-transparent to-red-500 opacity-30"></div>
@@ -1250,7 +1279,7 @@
             </div>
         </div>
         <div class="mt-8 text-center text-sm text-slate-500">
-            &copy; 2023 Timefe. All times are calculated based on your current location and browser settings.
+            &copy; 2025 Timefe. All times are calculated based on your current location and browser settings.
         </div>
     </footer>
     <script>
@@ -2353,6 +2382,63 @@
                 commLog.scrollTop = commLog.scrollHeight;
             }
         }
+        
+        // Function to update location information based on browser data
+        function updateLocationInfo() {
+            try {
+                // Update browser language
+                const browserLanguageElement = document.getElementById('browser-language');
+                if (browserLanguageElement) {
+                    const language = navigator.language || navigator.userLanguage || 'Unknown';
+                    browserLanguageElement.textContent = language;
+                }
+                
+                // Update connection status
+                const connectionStatusElement = document.getElementById('connection-status');
+                if (connectionStatusElement) {
+                    connectionStatusElement.textContent = navigator.onLine ? 'Online' : 'Offline';
+                    connectionStatusElement.className = navigator.onLine ? 
+                        'text-sm font-bold text-green-400' : 'text-sm font-bold text-red-500';
+                }
+                
+                // Update device type
+                const deviceTypeElement = document.getElementById('device-type');
+                if (deviceTypeElement) {
+                    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+                    const isTablet = /iPad|Android(?!.*Mobile)/i.test(navigator.userAgent);
+                    let deviceType = 'Desktop';
+                    
+                    if (isTablet) deviceType = 'Tablet';
+                    else if (isMobile) deviceType = 'Mobile';
+                    
+                    deviceTypeElement.textContent = deviceType;
+                }
+                
+                // Get geolocation if available
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(function(position) {
+                        const localCoordinatesElement = document.getElementById('local-coordinates');
+                        if (localCoordinatesElement) {
+                            const lat = position.coords.latitude.toFixed(4);
+                            const lng = position.coords.longitude.toFixed(4);
+                            const latDir = lat >= 0 ? 'N' : 'S';
+                            const lngDir = lng >= 0 ? 'E' : 'W';
+                            localCoordinatesElement.textContent = `${Math.abs(lat)}° ${latDir}, ${Math.abs(lng)}° ${lngDir}`;
+                        }
+                    }, function(error) {
+                        console.error("Error getting location:", error);
+                        // Keep default coordinates if geolocation fails
+                    });
+                }
+            } catch (error) {
+                console.error("Error updating location info:", error);
+            }
+        }
+        
+        // Call the function when the page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            updateLocationInfo();
+        });
     </script>
 </body>
 </html>
