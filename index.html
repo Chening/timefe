@@ -2078,7 +2078,7 @@
                 document.getElementById('next-session').textContent = 'Work';
             }
             
-            // Show notification
+            // Show on-screen notification
             const notification = document.createElement('div');
             notification.className = 'fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg';
             notification.textContent = pomodoroSettings.currentMode === 'work' ? 
@@ -2087,6 +2087,22 @@
             
             document.body.appendChild(notification);
             setTimeout(() => notification.remove(), 3000);
+            
+            // Show browser notification
+            if (Notification.permission === 'granted') {
+                const notificationTitle = pomodoroSettings.currentMode === 'work' ? 
+                    'Mars Shuttle Mission Complete!' : 
+                    'Orbital Phase Complete!';
+                
+                const notificationBody = pomodoroSettings.currentMode === 'work' ? 
+                    'Flight phase complete! Time to enter orbit.' : 
+                    'Orbit complete! Prepare for next flight phase.';
+                
+                const browserNotification = new Notification(notificationTitle, {
+                    body: notificationBody,
+                    icon: 'favicon.png'
+                });
+            }
         }
         
         function setPomodoroMode(mode) {
@@ -2167,6 +2183,22 @@
             document.getElementById('session-progress').style.width = `${progressPercent}%`;
         }
         
+        // Request notification permission
+        function requestNotificationPermission() {
+            if (!('Notification' in window)) {
+                console.log('This browser does not support notifications');
+                return;
+            }
+            
+            if (Notification.permission !== 'granted' && Notification.permission !== 'denied') {
+                Notification.requestPermission().then(permission => {
+                    if (permission === 'granted') {
+                        console.log('Notification permission granted');
+                    }
+                });
+            }
+        }
+        
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
             // Set initial background (will be updated after location detection)
@@ -2174,6 +2206,9 @@
             
             // Get user location and update display
             getUserLocation();
+            
+            // Request notification permission
+            requestNotificationPermission();
             
             // 清除可能存在的旧定时器
             if (clockIntervalId) {
