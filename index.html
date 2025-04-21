@@ -814,14 +814,43 @@
                 <i class="fas fa-satellite-dish mr-2 text-red-400"></i> Deep Space Network Status
             </h3>
             
-            <!-- Network visualization container -->
+            <!-- Deep Space Network container with reorganized layout -->
             <div class="bg-black bg-opacity-50 rounded-xl p-6 relative overflow-hidden border border-red-900 border-opacity-30 shadow-lg">
                 <!-- Decorative elements -->
                 <div class="absolute -right-20 -top-20 w-40 h-40 bg-blue-600 rounded-full opacity-10 blur-lg"></div>
                 <div class="absolute -left-10 -bottom-10 w-32 h-32 bg-red-600 rounded-full opacity-10 blur-lg"></div>
                 
-                <!-- Network visualization -->
+                <!-- Communication logs - Rust-style terminal (PRIORITIZED) -->
+                <div class="bg-black bg-opacity-90 rounded-lg p-3 border border-slate-700 overflow-hidden mb-6">
+                    <div class="flex justify-between items-center mb-2">
+                        <h4 class="text-sm font-bold text-slate-300 flex items-center">
+                            <i class="fas fa-terminal mr-2 text-xs"></i> DSN COMM CHANNEL
+                        </h4>
+                        <div class="flex space-x-2">
+                            <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+                            <div class="text-xs text-green-400 font-mono">LIVE</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Terminal header with Rust-style formatting -->
+                    <div class="text-xs font-mono text-slate-400 border-b border-slate-700 pb-1 mb-1 flex justify-between">
+                        <span>SOURCE</span>
+                        <span>MESSAGE</span>
+                        <span>STATUS</span>
+                    </div>
+                    
+                    <!-- Scrollable terminal content -->
+                    <div id="comm-log" class="font-mono text-xs space-y-1 h-32 overflow-y-auto pr-1 terminal-content">
+                        <!-- Messages will be dynamically inserted here by JavaScript -->
+                    </div>
+                </div>
+                
+                <!-- Network visualization (MOVED BELOW) -->
                 <div class="h-96 relative" id="network-visualization">
+                    <!-- Section label -->
+                    <div class="absolute top-0 left-0 z-10 bg-black bg-opacity-70 px-3 py-1 rounded-br-lg">
+                        <span class="text-xs font-bold text-blue-300 font-['Orbitron']">NETWORK VISUALIZATION</span>
+                    </div>
                     <!-- Earth Node -->
                     <div class="absolute bottom-10 left-10 network-node earth-node">
                         <div class="relative">
@@ -1104,30 +1133,7 @@
                     <div class="asteroid asteroid-path" style="top: 45%; left: -5%; animation-delay: 10s;"></div>
                 </div>
                 
-                <!-- Communication logs - Rust-style terminal -->
-                <div class="mt-4 bg-black bg-opacity-90 rounded-lg p-3 border border-slate-700 h-40 overflow-hidden">
-                    <div class="flex justify-between items-center mb-2">
-                        <h4 class="text-sm font-bold text-slate-300 flex items-center">
-                            <i class="fas fa-terminal mr-2 text-xs"></i> DSN COMM CHANNEL
-                        </h4>
-                        <div class="flex space-x-2">
-                            <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-                            <div class="text-xs text-green-400 font-mono">LIVE</div>
-                        </div>
-                    </div>
-                    
-                    <!-- Terminal header with Rust-style formatting -->
-                    <div class="text-xs font-mono text-slate-400 border-b border-slate-700 pb-1 mb-1 flex justify-between">
-                        <span>SOURCE</span>
-                        <span>MESSAGE</span>
-                        <span>STATUS</span>
-                    </div>
-                    
-                    <!-- Scrollable terminal content -->
-                    <div id="comm-log" class="font-mono text-xs space-y-1 h-24 overflow-y-auto pr-1 terminal-content">
-                        <!-- Messages will be dynamically inserted here by JavaScript -->
-                    </div>
-                </div>
+                <!-- Communication logs section removed from here and moved to the top -->
                 
                 <!-- Rust-style typing cursor animation -->
                 <style>
