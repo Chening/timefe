@@ -851,10 +851,36 @@
                                 <span class="text-xs font-bold text-cyan-300">RELAY SATELLITE</span>
                             </div>
                             <div class="absolute top-0 right-0 w-2 h-2 rounded-full bg-green-400 animate-ping"></div>
-                            <!-- Solar panels -->
+                            <!-- Solar panels - expanded design -->
                             <div class="absolute inset-0 w-full h-full rotate-medium">
-                                <div class="absolute left-12 top-4 w-8 h-1 bg-blue-200 opacity-80"></div>
-                                <div class="absolute right-12 top-4 w-8 h-1 bg-blue-200 opacity-80"></div>
+                                <!-- Left solar panel - expanded with cells -->
+                                <div class="absolute left-12 top-3 w-10 h-4 bg-gradient-to-b from-blue-300 to-blue-200 opacity-80 border border-blue-400" style="transform: perspective(200px) rotateY(-30deg)">
+                                    <!-- Solar panel cells -->
+                                    <div class="grid grid-cols-4 grid-rows-2 h-full w-full">
+                                        <div class="border-r border-b border-blue-500 opacity-70"></div>
+                                        <div class="border-r border-b border-blue-500 opacity-70"></div>
+                                        <div class="border-r border-b border-blue-500 opacity-70"></div>
+                                        <div class="border-b border-blue-500 opacity-70"></div>
+                                        <div class="border-r border-blue-500 opacity-70"></div>
+                                        <div class="border-r border-blue-500 opacity-70"></div>
+                                        <div class="border-r border-blue-500 opacity-70"></div>
+                                        <div class="border-blue-500 opacity-70"></div>
+                                    </div>
+                                </div>
+                                <!-- Right solar panel - expanded with cells -->
+                                <div class="absolute right-12 top-3 w-10 h-4 bg-gradient-to-b from-blue-300 to-blue-200 opacity-80 border border-blue-400" style="transform: perspective(200px) rotateY(30deg)">
+                                    <!-- Solar panel cells -->
+                                    <div class="grid grid-cols-4 grid-rows-2 h-full w-full">
+                                        <div class="border-r border-b border-blue-500 opacity-70"></div>
+                                        <div class="border-r border-b border-blue-500 opacity-70"></div>
+                                        <div class="border-r border-b border-blue-500 opacity-70"></div>
+                                        <div class="border-b border-blue-500 opacity-70"></div>
+                                        <div class="border-r border-blue-500 opacity-70"></div>
+                                        <div class="border-r border-blue-500 opacity-70"></div>
+                                        <div class="border-r border-blue-500 opacity-70"></div>
+                                        <div class="border-blue-500 opacity-70"></div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -870,30 +896,46 @@
                                 <span class="text-xs font-bold text-red-300">MARS COMMAND</span>
                             </div>
                             <div class="absolute top-0 right-0 w-2 h-2 rounded-full bg-green-400 animate-ping"></div>
-                            <!-- Mars' moons orbit -->
+                            <!-- Mars' moons orbit - enhanced with glowing effect -->
                             <div class="absolute inset-0 w-full h-full rotate-fast orbit">
-                                <div class="absolute -right-3 top-2 w-2 h-2 rounded-full bg-gray-400 opacity-70"></div>
+                                <!-- Phobos moon with orbit path -->
+                                <div class="absolute -right-3 top-2 w-2 h-2 rounded-full bg-gray-300 opacity-80" style="box-shadow: 0 0 4px rgba(255, 255, 255, 0.5)"></div>
+                                <!-- Subtle orbit path -->
+                                <div class="absolute inset-0 w-full h-full rounded-full border border-gray-500 opacity-20"></div>
                             </div>
                             <div class="absolute inset-0 w-full h-full rotate-medium orbit" style="transform: rotate(120deg)">
-                                <div class="absolute -left-4 top-3 w-3 h-3 rounded-full bg-gray-500 opacity-70"></div>
+                                <!-- Deimos moon with orbit path -->
+                                <div class="absolute -left-4 top-3 w-3 h-3 rounded-full bg-gray-400 opacity-80" style="box-shadow: 0 0 4px rgba(255, 255, 255, 0.5)"></div>
+                                <!-- Subtle orbit path -->
+                                <div class="absolute inset-0 w-full h-full rounded-full border border-gray-500 opacity-15" style="width: 110%; height: 110%; left: -5%; top: -5%"></div>
                             </div>
                         </div>
                     </div>
                     
-                    <!-- Spacecraft Node -->
+                    <!-- Spacecraft Node - Enhanced with tech details -->
                     <div class="absolute bottom-1/3 right-20 network-node spacecraft-node">
                         <div class="relative">
-                            <div class="w-10 h-10 rounded-full bg-orange-500 flex items-center justify-center shadow-glow-orange pulse-fast planet-glow-orange">
+                            <!-- Main spacecraft body with tech-inspired design -->
+                            <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center shadow-glow-orange pulse-fast planet-glow-orange border border-orange-300 border-opacity-30" style="transform: rotate(15deg)">
                                 <i class="fas fa-rocket text-lg text-white"></i>
+                                <!-- Tech details overlay -->
+                                <div class="absolute top-0 left-0 w-full h-full">
+                                    <div class="absolute top-1 right-1 w-2 h-2 rounded-full bg-blue-400 opacity-80"></div>
+                                    <div class="absolute bottom-1 left-1 w-2 h-2 rounded-full bg-green-400 opacity-80"></div>
+                                    <div class="absolute top-0 left-0 w-full h-1/3 border-b border-orange-300 border-opacity-30"></div>
+                                </div>
                             </div>
-                            <div class="signal-waves spacecraft-waves"></div>
+                            <!-- Enhanced signal waves with variable opacity -->
+                            <div class="signal-waves spacecraft-waves" style="animation: signal-wave 2.5s linear infinite; opacity: 0.8"></div>
                             <div class="absolute -bottom-8 left-0 right-0 text-center">
-                                <span class="text-xs font-bold text-orange-300">MARS SHUTTLE</span>
+                                <span class="text-xs font-bold text-orange-300 font-['Orbitron']">MARS SHUTTLE</span>
                             </div>
-                            <div class="absolute top-0 right-0 w-2 h-2 rounded-full bg-green-400 animate-ping"></div>
-                            <!-- Thruster effect -->
-                            <div class="absolute -bottom-3 left-1/2 transform -translate-x-1/2 w-4 h-4">
-                                <div class="w-full h-full bg-gradient-to-t from-orange-500 via-yellow-500 to-transparent rounded-full animate-pulse"></div>
+                            <!-- Status indicator with enhanced pulse effect -->
+                            <div class="absolute top-0 right-0 w-2 h-2 rounded-full bg-green-400" style="animation: pulse 1.5s ease-in-out infinite; box-shadow: 0 0 5px rgba(74, 222, 128, 0.6)"></div>
+                            <!-- Enhanced thruster effect with multiple layers -->
+                            <div class="absolute -bottom-4 left-1/2 transform -translate-x-1/2 w-5 h-6" style="transform-origin: center top; transform: translateX(-50%) rotate(15deg)">
+                                <div class="w-full h-full bg-gradient-to-t from-orange-500 via-yellow-500 to-transparent rounded-full animate-pulse opacity-80"></div>
+                                <div class="absolute top-1 left-1/2 transform -translate-x-1/2 w-3 h-4 bg-gradient-to-t from-yellow-300 via-white to-transparent rounded-full animate-pulse opacity-60"></div>
                             </div>
                         </div>
                     </div>
